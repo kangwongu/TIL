@@ -10,6 +10,6 @@
 
 year=<%=request.getParameter("year")%> <br>
 <h1>year=${param.year}</h1> <br>
-<P>  ${year}년 ${month}월 ${day}일은 ${yoil}요일입니다. </P>
+<P>  ${myDate.year}년 ${myDate.month}월 ${myDate.day}일은 ${yoil}요일입니다. </P>
 </body>
 </html>

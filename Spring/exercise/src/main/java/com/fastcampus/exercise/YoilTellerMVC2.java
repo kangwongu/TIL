@@ -1,23 +1,29 @@
 package com.fastcampus.exercise;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Calendar;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class YoilTellerMVC {
-	@RequestMapping("/getYoilMVC")
+public class YoilTellerMVC2 {
+	// 예외처리 메소드, 컨트롤러에서 발생되는 모든 예외를 처리
+	@ExceptionHandler(Exception.class)
+	public String catcher(Exception e) {
+		e.printStackTrace();
+		return "yoilError";
+	}
+	
+	@RequestMapping("/getYoilMVC2")
 	// 1. 입력
 	// 입력을 분리, 매개변수로 넣어줌으로써 입력행위를 간소화 가능 
-	public String main(int year, int month, int day, Model model) throws IOException {
+	public String main(@RequestParam(required=true) int year,
+				@RequestParam(required=true) int month,
+				@RequestParam(required=true) int day, Model model) throws IOException {
 	
 		// 유효성 검사
 		if(!isValid(year, month, day)) 
