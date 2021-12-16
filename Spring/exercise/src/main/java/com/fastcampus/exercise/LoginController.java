@@ -3,7 +3,9 @@ package com.fastcampus.exercise;
 import java.net.URLEncoder;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +20,21 @@ public class LoginController {
 		return "loginForm";
 	}
 	
-	@PostMapping("/login")
-	public String login(String id, String pwd, boolean rememberId, HttpServletResponse response) throws Exception {
-		// rememberId가 어떤 값으로 넘어오는지 확인
-		System.out.println("id="+id);
-		System.out.println("pwd="+pwd);
-		System.out.println("rememberId="+rememberId);
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request) {
+		// 세션 삭제
+		HttpSession session = request.getSession();
+		session.invalidate();
+		// 홈으로 이동
+		return "redirect:/";
 		
+	}
+	
+	
+	@PostMapping("/login")
+	public String login(String id, String pwd, boolean rememberId, 
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+
 		// 1. id, pwd를 확인
 		if(!loginCheck(id, pwd)) {
 			// 1-1. 로그인 실패하면 다시 로그인 화면으로
@@ -32,6 +42,10 @@ public class LoginController {
 			return "redirect:/login/login?msg="+msg;
 		}
 		// 2. 로그인 성공하면 홈으로 이동
+		// 세션에 id 저장
+		HttpSession session = request.getSession();
+		session.setAttribute("id", id);
+		
 		//	  1. 쿠키 생성
 		//	  2. 응답에 저장
 		//	  3. 홈으로 이동
@@ -49,9 +63,16 @@ public class LoginController {
 			// 2. 응답에 저장
 			response.addCookie(cookie);
 		}
+		// 세션에 toURL주소가 있으면 해당 주소로 이동
+		Object toURL = session.getAttribute("toURL");
+		toURL = session.getAttribute("toURL")==null || session.getAttribute("toURL").equals("") ? "/" : toURL;
+//		if(session.getAttribute("toURL")==null || session.getAttribute("toURL").equals(""))
+//			return "redirect:/";
+//		else
+//			return "redirect:"+session.getAttribute("toURL");
 		
 		// 3. 홈으로 이동
-		return "redirect:/";	// redirect하기 때문에 GETMAPPING에서 받음
+		return "redirect:"+toURL;	// redirect하기 때문에 GETMAPPING에서 받음
 	}
 
 	private boolean loginCheck(String id, String pwd) {

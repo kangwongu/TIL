@@ -1,16 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
-<!-- 변수 선언 -->
-<c:set var="loginOut" value="${sessionScope.id==null ? 'Login' : 'Logout'}" /> <!-- 로그인이 된 상태면 로그아웃, 로그인 안 된 상태면 로그인 -->
-<c:set var="loginOutLink" value="${sessionScope.id==null ? '/login/login' : '/login/logout'}" /> <!-- 로그인이 된 상태면 로그아웃, 로그인 안 된 상태면 로그인 -->
+<!-- 변수 선언 -->    
+<c:set var="loginOut" value="${sessionScope.id==null ? 'Login' : 'Logout' }"/>
+<c:set var="loginOutLink" value="${sessionScope.id==null ? '/login/login' : '/login/logout'}"/>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
     <title>fastcampus</title>
     <link rel="stylesheet" href="<c:url value='/css/menu.css'/>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>    
 </head>
 <body>
 <div id="menu">
@@ -22,9 +20,12 @@
 	    <li><a href="<c:url value='/register/add'/>">Sign in</a></li>
 	    <li><a href=""><i class="fas fa-search small"></i></a></li>
 	</ul> 
+</div><div style="text-align:center">
+	<h1>This is BOARD</h1>
+	<h1>This is BOARD</h1>
+	<h1>This is BOARD</h1>
+	<h1>This is BOARD</h1>
+	<h1>This is BOARD</h1>
 </div>
-<div style="text-align:center">
-	<h1>This is HOME</h1>
-	<h1>This is HOME</h1>
-	<h1>This is HOME</h1>
-</div>
+</body>
+</html>
