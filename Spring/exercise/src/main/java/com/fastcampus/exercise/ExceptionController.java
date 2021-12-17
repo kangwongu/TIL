@@ -1,16 +1,18 @@
 package com.fastcampus.exercise;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class ExceptionController {
 	// 이 컨트롤러에서 발생하는 예외를 처리하는 메소드
 	@ExceptionHandler(Exception.class)
-	public String catcher(Exception ex, Model m) {
-		m.addAttribute("ex", ex);
+	@ResponseStatus(HttpStatus.BAD_REQUEST)	// 200 -> 500
+	public String catcher(Exception ex) {
 		return "error";
 	}
 	
