@@ -1,0 +1,18 @@
+
+.topmenu {
+  background-color: #222;
+  width: 900px;
+  height: 40px;
+  color: #fff
+}
+.nav {
+  list-style: none;
+  line-height: 40px;
+  text-align: center;
+}
+li {
+  color: white;
+  font-weight: bold;
+  width: 200px;
+  display: block;
+}
