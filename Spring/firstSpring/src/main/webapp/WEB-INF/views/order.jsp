@@ -1,0 +1,87 @@
+<%@ page contentType="text/html;charset=utf-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page session="false" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+</head>
+<body>
+  <form action="<c:url value="/order"/>" method="POST">
+    
+    <fieldset>
+      <legend>배송정보</legend>
+      <ul>
+        <li>
+          <label for="name">이름</label>
+          <input type="text" id="name" name="name" required>
+        </li>
+        <li>
+          <label for="address">배송 주소</label>
+          <input type="text" id="address" name="address" required>
+        </li>
+        <li>
+          <label for="email">이메일</label>
+          <input type="email" id="email" name="email">
+        </li>
+        <li>
+          <label for="phoneNumber">연락처</label>
+          <input type="tel" id="phoneNumber" name="phone" placeholder="하이픈 빼고 입력해주세요.">
+        </li>
+        <li>
+          <label for="date">배송 지정 </label>
+          <input type="date" id="date" min="" name="date"> <small>(주문일로부터 최소 3일 이후)</small>
+        </li>
+        <li>
+          <label for="path">가입 경로</label>
+          <select id="path", name="path">
+            <option value="blog" >블로그</option>
+            <option value="search">검색</option>
+            <option value="sns">SNS</option>
+            <option value="etc">기타</option>
+          </select>
+        </li>
+        <li>
+          <label for="memo">메모</label>
+          <textarea name="memo" id="memo" cols="40" rows="4" placeholder="남길 말이 있다면 여기에"></textarea>
+        </li>
+      </ul>
+    </fieldset>
+    <fieldset>
+      <legend>상품선택</legend>
+      <p><b>주문할 상품을 선택해 주세요.</b></p>
+      <ul>
+        <li>
+          <label><input type="checkbox" value="s_3" name="product">선물용 3kg</label>
+          <input type="number" min="0" max="5">개 (최대 5개)
+        </li>
+        <li>
+          <label><input type="checkbox" value="s_5" name="product">선물용 5kg</label>
+          <input type="number" min="0" max="3">개 (최대 3개)
+        </li>
+        <li>
+          <label><input type="checkbox" value="f_3" name="product">가정용 3kg</label>
+          <input type="range" min="0" max="5">개 (최대 5개)
+        </li>
+        <li>
+          <label><input type="checkbox" value="f_5" name="product">가정용 5kg</label>
+          <input type="range" min="0" max="3">개 (최대 3개)
+        </li>
+      </ul>
+      <label for="prod2">포장 여부</label>
+      <input type="text" id="prod2" list="pack" name="pack">
+      <datalist id="pack">
+        <option value="package">선물 포장</option>
+        <option value="no_package">포장 안 함</option>
+      </datalist>
+    </fieldset>
+    <div>
+    <input type="submit" value="주문하기">
+    <input type="reset" value="취소하기">
+  </div>
+  </form>
+</body>
+</html>
