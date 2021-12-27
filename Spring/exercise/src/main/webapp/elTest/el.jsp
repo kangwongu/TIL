@@ -24,7 +24,7 @@ name=${requestScope.name} <br>
 name=${name} <br>
 
 id=<%=request.getParameter("id") %> <br>
-<!-- request는 지역변수이기 때문에 EL에서 사용 불가, 따라서 request의 저장소인 requestScope사용 -->
+<!-- request는 지역변수이기 때문에 EL에서 사용 불가, pageContext저장소에서 request를 참조하는 식으로 사용 -->
 id=${pageContext.request.getParameter("id")} <br>
 id=${param.id} <br>
 
