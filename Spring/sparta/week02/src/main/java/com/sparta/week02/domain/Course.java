@@ -36,6 +36,11 @@ public class Course extends Timestamped {
     // setter 설정 안하는 이유?
     // repository에서 해줄 것이기 때문에 안함
 
+    public Course(CourseRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.tutor = requestDto.getTutor();
+    }
+
     public Course(String title, String tutor) {
         this.title = title;
         this.tutor = tutor;
