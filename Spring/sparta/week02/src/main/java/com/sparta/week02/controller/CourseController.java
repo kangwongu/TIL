@@ -14,7 +14,6 @@ import java.util.List;
 public class CourseController {
 
     private final CourseRepository courseRepository;
-
     private final CourseService courseService;
 
     // PostMapping을 통해서, 같은 주소라도 방식이 다름을 구분합니다.
