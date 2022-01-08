@@ -56,11 +56,33 @@
             width: 450px;
             margin: auto;
         }
+        .rate {
+            color: blue;
+        }
     </style>
     <script>
+        $(document).ready(function() {
+            rate();
+        });
+
         function order() {
             alert('주문이 완료되었습니다.');
         }
+
+        function rate() {
+            $.ajax({
+            type: "GET",
+            url: "http://spartacodingclub.shop/sparta_api/rate",
+            data: {},
+            success: function (response) {
+                let rate = response['rate'];
+                console.log(rate);
+                let html_temp = `환율 : ${rate}`;
+                $('#rate').append(html_temp);
+            }
+          })
+        }
+
     </script>
 </head>
 
@@ -70,7 +92,7 @@
         <div class="product-discription">
         <h1>이색 강아지 벨트! <span class="price">가격 : 5000원</span></h1>
         <p>이색 강아지 벨트! 귀여운 강아지들의 기저귀 대용으로 쓰여요!</p>
-
+        <p id="rate" class="rate"></p>
     </div>
         <div class="product-order">
         <div class="input-group mb-3">
@@ -107,7 +129,6 @@
         <button onclick="order()" type="button" class="btn btn-secondary btn-order">주문하기</button>
     </div>
     </div>
-
 </body>
 
 </html>
