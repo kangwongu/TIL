@@ -8,22 +8,22 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-@RequiredArgsConstructor    // Lombok을 이용해 필요한 생성자를 생성
 @Service
+@RequiredArgsConstructor
 public class MemoService {
 
-    // 반드시 final을 넣어줘야 함, final을 안붙이면 스프링이 이 객체를 안넣어줄 수도 있음
     private final MemoRepository memoRepository;
 
     // 업데이트 메소드
-    @Transactional  // DB에 반영되어야 함을 지정
-    public Long update(Long id, MemoRequestDto requestDto) {
-        // 업데이트할 요소를 찾는다
+    @Transactional
+    public Long update(Long id, MemoRequestDto memoRequestDto) {
+        // 1. 업데이트할 요소를 찾는다.
         Memo memo = memoRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 id가 없습니다.")
         );
-        // 찾은 요소를 업데이트 한다
-        memo.update(requestDto);
+
+        // 2. 찾은 해당 요소를 업데이트 한다.
+        memo.update(memoRequestDto);
         return memo.getId();
     }
 }

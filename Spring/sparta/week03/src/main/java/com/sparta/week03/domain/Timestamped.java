@@ -9,13 +9,13 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
+@MappedSuperclass // 이 클래스를 상속받는 자손클래스는 멤버변수를 컬럼으로 인식
+@EntityListeners(AuditingEntityListener.class)  // 생성/변경 시간을 자동으로 업데이트
 @Getter
-@MappedSuperclass // Entity가 자동으로 컬럼으로 인식합니다.
-@EntityListeners(AuditingEntityListener.class) // 생성/변경 시간을 자동으로 업데이트합니다.
-public abstract class Timestamped { // 추상클래스
+public class Timestamped {
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;

@@ -7,13 +7,11 @@ import com.sparta.week03.service.MemoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class MemoController {
 
     private final MemoRepository memoRepository;
@@ -21,30 +19,32 @@ public class MemoController {
 
     // 생성
     @PostMapping("/api/memos")
-    public Memo createMemo(@RequestBody MemoRequestDto requestDto) {
-//                        요청이 올 때 바디 부분을 해당 매개변수에 넣어줌
-        Memo memo = new Memo(requestDto);
+    public Memo createMemo(@RequestBody MemoRequestDto memoRequestDto) {
+        // 요청으로 넘어온 매개변수를 메모로 생성한다
+        Memo memo = new Memo(memoRequestDto);
         return memoRepository.save(memo);
     }
 
     // 조회
     @GetMapping("/api/memos")
     public List<Memo> readMemo() {
-        LocalDateTime now = LocalDateTime.now();
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
-        return memoRepository.findAllByModifiedAtBetweenOrderByModifiedAtDesc(yesterday, now);
+        LocalDateTime today = LocalDateTime.now();
+        // 메모의 목록을 조회
+        return memoRepository.findAllByModifiedAtBetweenOrderByModifiedAtDesc(yesterday, today);
     }
 
     // 수정
     @PutMapping("/api/memos/{id}")
-    public Long ModifyMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {
-        // Controller ->  Service -> Repo
-        return memoService.update(id, requestDto);
+    public Long updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto memoRequestDto) {
+        memoService.update(id, memoRequestDto);
+        return id;
     }
 
     // 삭제
     @DeleteMapping("/api/memos/{id}")
     public Long deleteMemo(@PathVariable Long id) {
+        // 해당 id의 메모를 삭제
         memoRepository.deleteById(id);
         return id;
     }
