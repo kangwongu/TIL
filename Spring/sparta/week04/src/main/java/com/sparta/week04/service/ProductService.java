@@ -14,6 +14,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    // 관심 가격 정보를 변경
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
     public Long update(Long id, ProductMypriceRequestDto requestDto) {
         Product product = productRepository.findById(id).orElseThrow(

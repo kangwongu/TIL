@@ -36,7 +36,7 @@ public class Product extends Timestamped {
         this.link = requestDto.getLink();
         this.lprice = requestDto.getLprice();
         this.image = requestDto.getImage();
-        this.myprice = 0;
+        this.myprice = 0;   // 사용자의 최저가 가격 설정 전 값
     }
 
     public void update(ProductMypriceRequestDto requestDto) {

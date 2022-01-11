@@ -19,7 +19,7 @@ public class ProductRestController {
 
     // 등록된 전체 상품 목록 조회
     @GetMapping("/api/products")
-    public List<Product> getProducts() {
+    public List<Product> readProducts() {
         return productRepository.findAll();
     }
 

@@ -3,6 +3,7 @@ package com.sparta.week04.models;
 import lombok.Getter;
 import org.json.JSONObject;
 
+// 검색 결과를 사용자에게 반환할 때 쓰는 Dto
 @Getter
 public class ItemDto {
     private String title;
