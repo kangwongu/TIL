@@ -13,10 +13,6 @@ def home():
     return render_template('index.html')
 
 
-if __name__ == '__main__':
-    app.run('0.0.0.0', port=5000, debug=True)
-
-
 ## API 역할을 하는 부분
 # 주문정보 생성
 @app.route('/order', methods=['POST'])
@@ -41,4 +37,8 @@ def product_order():
     db.product.insert_one(doc)
 
     # 3. 성공 메세지를 보내준다
-    return jsonify({'result': 'success', 'msg': '주문 완료!'})
+    return jsonify({'msg': '주문 완료!'})
+
+
+if __name__ == '__main__':
+    app.run('0.0.0.0', port=5000, debug=True)

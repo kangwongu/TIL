@@ -92,14 +92,15 @@
                     }
                 });
             }
-
+            // 좋아요표시를 누르면 해당 배우의 이름을 받아와서 서버에 넘겨줌
             function likeStar(name) {
                 $.ajax({
                     type: 'POST',
                     url: '/api/like',
-                    data: {sample_give:'샘플데이터'},
+                    data: {name_give:name},
                     success: function (response) {
                         alert(response['msg']);
+                        window.location.reload()
                     }
                 });
             }
@@ -108,9 +109,10 @@
                 $.ajax({
                     type: 'POST',
                     url: '/api/delete',
-                    data: {sample_give:'샘플데이터'},
+                    data: {name_give:name},
                     success: function (response) {
                         alert(response['msg']);
+                        window.location.reload()
                     }
                 });
             }
