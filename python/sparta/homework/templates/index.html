@@ -20,14 +20,19 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
 
-    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+    <title>원페이지 쇼핑몰</title>
+    <meta property="og:title" content="원페이지쇼핑몰"/>
+    <meta property="og:description" content="21/22시즌 아스날 유니폼"/>
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.jpg') }}"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
     <style>
         * {
             font-family: 'Hi Melody', cursive;
         }
+
         .product-image {
             width: 500px;
             height: 350px;
@@ -36,22 +41,28 @@
             background-size: cover;
             background-position: center;
         }
+
         .product-discription {
             width: 500px;
             margin-top: 20px;
             margin-bottom: 20px;
         }
+
         .price {
             font-size: 15px;
         }
+
         .product-order {
             width: 500px;
+            margin-bottom: 50px;
         }
+
         .btn-order {
             margin: auto;
             width: 100px;
             display: block;
         }
+
         .wrap {
             width: 500px;
             margin: auto;
@@ -59,6 +70,10 @@
 
     </style>
     <script>
+        $(document).ready(function () {
+            showProduct();
+        });
+
         function order() {
             // 1. 주문자 이름, 수량, 주소, 전화번호의 값을 가져옮
             let name = $('#name').val()
@@ -71,10 +86,10 @@
                 type: "POST",
                 url: "/order",
                 data: {
-                    name_give:name,
-                    number_give:number,
-                    address_give:address,
-                    phone_give:phone
+                    name_give: name,
+                    number_give: number,
+                    address_give: address,
+                    phone_give: phone
                 },
                 success: function (response) { // 성공하면
                     alert(response["msg"]);
@@ -82,52 +97,116 @@
                 }
             })
         }
+
+        function showProduct() {
+            $('#order-box').empty();
+            // 1. GET메소드 요청
+            $.ajax({
+                type: "GET",
+                url: "/order",
+                success: function (response) { // 성공하면
+                    let order = response['order_list'];
+                    // 서버에서 넘어온 주문정보에서 데이터 추출
+                    for (let i = 0; i < order.length; i++) {
+                        let name = order[i]['name'];
+                        let number = order[i]['number'];
+                        let address = order[i]['address'];
+                        let phone = order[i]['phone'];
+
+                        // 2. HTML로 만듦
+                        let temp_html = `<tr>
+                                            <th scope="row">${name}</th>
+                                            <td>${number}</td>
+                                            <td>${address}</td>
+                                            <td>${phone}</td>
+                                        </tr>`
+
+                        // 3. 붙임
+                        $('#order-box').append(temp_html);
+                    }
+                }
+            })
+
+
+        }
     </script>
 </head>
 
 <body>
-    <div class="wrap">
-        <div class="product-image">
-        </div>
-        <div class="product-discription">
-            <h1>아스날 유니폼 판매 <span class="price">가격 : 89,000원</span></h1>
-            <p>이 유니폼은 21/22시즌 아스날의 홈 유니폼 입니다. 아디다스 제작</p>
-        </div>
-        <div class="product-order">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend" >
-                    <span class="input-group-text" id="inputGroup-sizing-1">주문자 이름</span>
-                </div>
-                <input id="name" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" for="number">수량</label>
-                </div>
-                <select class="custom-select" id="number">
-                    <option selected>-- 수량을 선택하세요 --</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend" >
-                    <span class="input-group-text" id="inputGroup-sizing-2">주소</span>
-                </div>
-                <input id="address" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-3">전화번호</span>
-                </div>
-                <input id="phone" type="tel" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <button onclick="order()" type="button" class="btn btn-primary btn-order" >주문하기</button>
-        </div>
+<div class="wrap">
+    <div class="product-image">
     </div>
+    <div class="product-discription">
+        <h1>아스날 유니폼 판매 <span class="price">가격 : 89,000원</span></h1>
+        <p>이 유니폼은 21/22시즌 아스날의 홈 유니폼 입니다. 아디다스 제작</p>
+    </div>
+    <div class="product-order">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-1">주문자 이름</span>
+            </div>
+            <input id="name" type="text" class="form-control" aria-label="Default"
+                   aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="number">수량</label>
+            </div>
+            <select class="custom-select" id="number">
+                <option selected>-- 수량을 선택하세요 --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-2">주소</span>
+            </div>
+            <input id="address" type="text" class="form-control" aria-label="Default"
+                   aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-3">전화번호</span>
+            </div>
+            <input id="phone" type="tel" class="form-control" aria-label="Default"
+                   aria-describedby="inputGroup-sizing-default">
+        </div>
+        <button onclick="order()" type="button" class="btn btn-primary btn-order">주문하기</button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">이름</th>
+            <th scope="col">수량</th>
+            <th scope="col">주소</th>
+            <th scope="col">전화번호</th>
+        </tr>
+        </thead>
+        <tbody id="order-box">
+        <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td colspan="2">Larry the Bird</td>
+            <td>@twitter</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 
 </body>

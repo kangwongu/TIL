@@ -3,8 +3,9 @@ from flask import Flask, render_template, jsonify, request
 app = Flask(__name__)
 
 from pymongo import MongoClient
-
-client = MongoClient('localhost', 27017)
+                                # id:password
+client = MongoClient('mongodb://test:test@localhost', 27017)
+# client = MongoClient('localhost', 27017)
 db = client.dbsparta
 
 
@@ -38,6 +39,15 @@ def product_order():
 
     # 3. 성공 메세지를 보내준다
     return jsonify({'msg': '주문 완료!'})
+
+# 주문정보 보여주기
+@app.route('/order', methods=['GET'])
+def product_read():
+    # 1. DB에서 모든 데이터를 꺼내온다
+    order_list = list(db.product.find({}, {'_id': False}))
+
+    # 2. 클라에 보내준다
+    return jsonify({'order_list':order_list})
 
 
 if __name__ == '__main__':
