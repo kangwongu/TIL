@@ -30,46 +30,44 @@
 
     <script>
         function q1() {
-            // 여기에 코드를 입력하세요
-            $('#names-q1').empty();     // 표를 비움
-
+            $('#names-q1').empty()
+            // 따릉이 API에 요청해서 데이터를 가공후, HTML로 붙인다
+            // 1. 따릉이 API(서버)에 요청
             $.ajax({
-            type: "GET",
-            url: "http://spartacodingclub.shop/sparta_api/seoulbike",
-            data: {},
-            success: function (response) {
-                // 따릉이의 구체적 정보를 가져옮
-                let rows = response['getStationList']['row']
-                for(let i=0; i<rows.length; i++) {
-                    // 구체적 정보에서 역이름, 거치대 수, 주차된 따릉이 수를 가져옮
-                    let stationName = rows[i]['stationName'];
-                    let rackCnt = rows[i]['rackTotCnt'];
-                    let parkingCnt = rows[i]['parkingBikeTotCnt'];
+                type: "GET",
+                url: "http://spartacodingclub.shop/sparta_api/seoulbike",
+                data: {},
+                success: function (response) {
+                    // 2. 따릉이 API(서버)에서 제공해주는 데이터를 받고, 가공
+                    let rows = response['getStationList']['row']
+                    for(let i=0; rows.length; i++) {
+                        let stationName = rows[i]['stationName']
+                        let rackTotCnt = rows[i]['rackTotCnt']
+                        let parkingBikeTotCnt = rows[i]['parkingBikeTotCnt']
 
-                    // 가져온 정보를 통해서 html을 만듦
-                    let temp_html = '';
+                        // html로 만들 데이터를 담아둘 변수
+                        let temp_html = ''
 
-                    // 주차된 따릉이가 5개 미만이면 빨간색으로 표시
-                    if(parkingCnt < 5) {
-                        temp_html = `<tr>
-                           <td class="check">${stationName}</td>
-                           <td class="check">${rackCnt}</td>
-                           <td class="check">${parkingCnt}</td>
-                        </tr>`
-                    // 5개 이상이면 평범하게 검은색으로 표시
-                    } else {
-                        temp_html = `<tr>
-                           <td>${stationName}</td>
-                           <td>${rackCnt}</td>
-                           <td>${parkingCnt}</td>
-                        </tr>`
+                        // 3. 정류장에 따릉이 수가 5개 미만이면 빨간색으로 표시
+                        if(parkingBikeTotCnt < 5) {
+                            temp_html = `<tr class="check">
+                                            <td>${stationName}</td>
+                                            <td>${rackTotCnt}</td>
+                                            <td>${parkingBikeTotCnt}</td>
+                                        </tr>`
+                        } else {
+                            temp_html = `<tr>
+                                            <td>${stationName}</td>
+                                            <td>${rackTotCnt}</td>
+                                            <td>${parkingBikeTotCnt}</td>
+                                        </tr>`
+                        }
+
+                        // 4. HTML로 붙임
+                        $('#names-q1').append(temp_html)
                     }
-
-                    // 클래스 names-q1에 html을 붙임
-                    $('#names-q1').append(temp_html);
                 }
-            }
-          })
+            })
         }
     </script>
 

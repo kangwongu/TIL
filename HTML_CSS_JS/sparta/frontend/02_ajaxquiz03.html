@@ -18,17 +18,22 @@
 
     <script>
       function q1() {
-        // 여기에 코드를 입력하세요
-        $.ajax({
-            type: "GET",
-            url: "https://api.thedogapi.com/v1/images/search",
-            data: {},
-            success: function (response) {
-              let url = response[0]['url'];
-              $("#img-dog").attr("src", url);
+        // 고양이 API에 요청해서 데이터를 받아오고, 가공 후, 이미지 교체
 
-            }
-          })
+
+        // 1. 고양이 API(서버)에 요청
+        $.ajax({
+          type: "GET",
+          url: "https://api.thecatapi.com/v1/images/search",
+          data: {},
+          success: function (response) {
+            // 2.고양이 API에서 데이터(이미지 URL)를 받는다.
+            let url = response[0]['url']
+
+            // 3. 이미지 URL 교체
+            console.log($('#img-cat').attr('src', url))
+          }
+        })
       }
     </script>
 
@@ -39,12 +44,12 @@
     <hr/>
 
     <div class="question-box">
-      <h2>3. 랜덤 강아지 사진 API를 이용하기</h2>
-      <p>예쁜 강아지 사진을 보여주세요</p>
+      <h2>3. 랜덤 고양이 사진 API를 이용하기</h2>
+      <p>예쁜 고양이 사진을 보여주세요</p>
       <p>업데이트 버튼을 누를 때마다 지웠다 새로 씌여져야 합니다.</p>
-      <button onclick="q1()">강아지를 보자</button>
+      <button onclick="q1()">고양이를 보자</button>
       <div>
-        <img id="img-dog" src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>
+        <img id="img-cat" src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>
       </div>
     </div>
   </body>

@@ -12,37 +12,43 @@
         div.question-box {
             margin: 10px 0 20px 0;
         }
-        .gu_info {
+        .bad {
             color: red;
+            font-weight: bold;
         }
-
     </style>
 
     <script>
         function q1() {
-            // 여기에 코드를 입력하세요
-            $('#names-q1').empty();
+            $('#names-q1').empty()
+            // 서울시 OpenAPI를 활용해 미세먼지를 HTML로 만들어서 보여줌
+            // 1. 서울시 OpenAPI에 요청
+            $.ajax({
+                type: "GET",
+                url: "http://openapi.seoul.go.kr:8088/6d4d776b466c656533356a4b4b5872/json/RealtimeCityAir/1/99",
+                data: {},
+                success: function (response) {
+                    // 2. 서울시 OpenAPI에서 제공해주는 데이터를 가공?
+                    let rows = response['RealtimeCityAir']['row'];
+                    for(let i=0; i<rows.length; i++) {
+                        let gu_name = rows[i]['MSRSTE_NM'];
+                        let gu_mise = rows[i]['IDEX_MVL'];
+                        let gu_mise_status = rows[i]['IDEX_NM'];
 
-          $.ajax({
-            type: "GET",
-            url: "http://openapi.seoul.go.kr:8088/6d4d776b466c656533356a4b4b5872/json/RealtimeCityAir/1/99",
-            data: {},
-            success: function (response) {
-              let rows = response['RealtimeCityAir']['row'];
-              for(let i=0; i<rows.length; i++) {
-                  let gu_name = rows[i]['MSRSTE_NM'];
-                  let gu_mise = rows[i]['IDEX_MVL'];
-                  let html_temp;
+                        let temp_html = ''
 
-                  if(gu_mise > 80) {
-                      html_temp = `<li class="gu_info">${gu_name} : ${gu_mise}</li>`;
-                  } else {
-                      html_temp = `<li>${gu_name} : ${gu_mise}</li>`;
-                  }
-                  $('#names-q1').append(html_temp);
-              }
-            }
-          })
+                        // 3. 미세먼지 농도가 50이상이면 빨갛게
+                        if(gu_mise > 50) {
+                            temp_html = `<li class="bad">${gu_name} : ${gu_mise} (${gu_mise_status})</li>`
+                        } else {
+                            temp_html = `<li>${gu_name} : ${gu_mise} (${gu_mise_status})</li>`
+                        }
+
+                        // 4. 가공?한 데이터를 HTML로 만들어서 붙임
+                        $('#names-q1').append(temp_html)
+                    }
+                }
+            })
         }
     </script>
 
@@ -51,7 +57,7 @@
 <body>
     <h1>jQuery+Ajax의 조합을 연습하자!</h1>
 
-    <hr/>
+    <hr />
 
     <div class="question-box">
         <h2>1. 서울시 OpenAPI(실시간 미세먼지 상태)를 이용하기</h2>
