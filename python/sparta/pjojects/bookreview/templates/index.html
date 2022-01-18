@@ -30,15 +30,17 @@
             });
 
             function makeReview() {
-                let title = $('#title').val()
-                let author = $('#author').val()
-                let bookReview = $('#bookReview').val()
+                // 제목, 저자, 리뷰데이터를 가져와서 서버에 보내줌
+                // 1. 제목, 저자, 리뷰데이터를 가져옮
+                let title = $('#title').val();
+                let author = $('#author').val();
+                let review = $('#bookReview').val();
 
-
+                // 2. 가져온 데이터들을 서버에 보냄
                 $.ajax({
                     type: "POST",
                     url: "/review",
-                    data: {title_give:title, author_give:author, review_give:bookReview},
+                    data: {title_give:title,author_give:author,review_give:review},
                     success: function (response) {
                         alert(response["msg"]);
                         window.location.reload();
@@ -48,22 +50,28 @@
 
             function showReview() {
                 $('#reviews-box').empty()
+                // 서버에서 받은 데이터들을 가공해서 HTML로 만들고 붙임
+                // 1. 서버에 요청.
                 $.ajax({
                     type: "GET",
-                    url: "/review",
+                    url: "/review?sample_give=샘플데이터",
                     data: {},
                     success: function (response) {
+                        // 2. 요청한 데이터를 받고, HTML로 만들 준비
                         let reviews = response['all_reviews']
                         for(let i=0; i<reviews.length; i++) {
                             let title = reviews[i]['title']
                             let author = reviews[i]['author']
                             let review = reviews[i]['review']
 
+                            // HTML을 담을 변수
                             let temp_html = `<tr>
                                                 <td>${title}</td>
                                                 <td>${author}</td>
                                                 <td>${review}</td>
                                             </tr>`
+
+                            // 3. 만든 HTML을 붙임
                             $('#reviews-box').append(temp_html)
                         }
                     }

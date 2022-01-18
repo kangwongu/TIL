@@ -13,19 +13,19 @@ def home():
 ## API 역할을 하는 부분
 @app.route('/review', methods=['POST'])
 def write_review():
-    # 제목, 저자, 리뷰를 가져옮
+    # 클라이언트에서 넘어오는 제목, 저자, 리뷰데이터를 받음
     title_receive = request.form['title_give']
     author_receive = request.form['author_give']
     review_receive = request.form['review_give']
 
-    # json으로 만들고
+    # DB에 저장하기 위해 딕셔너리로 만듦
     doc = {
-        'title':title_receive,
-        'author':author_receive,
-        'review':review_receive
+        'title': title_receive,
+        'author': author_receive,
+        'review': review_receive
     }
 
-    # db에 저장
+    # DB에 저장
     db.bookreview.insert_one(doc)
 
     return jsonify({'msg': '저장 완료!'})
@@ -33,8 +33,12 @@ def write_review():
 
 @app.route('/review', methods=['GET'])
 def read_reviews():
-    reviews = list(db.bookreview.find({}, {'_id': False}))
+    # DB에 있는 리뷰데이터들을 클라이언트에 보내줌
 
+    # DB에 저장되어 있는 모든 데이터 가져옮
+    reviews = list(db.bookreview.find({},{'_id':False})) # id는 표시x
+
+    # 클라이언트에 보내줌
     return jsonify({'all_reviews': reviews})
 
 
