@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Hi Melody', cursive;
+        }
+        .wrap {
+            width: 500px;
+            margin: auto;
+        }
+        .product-image {
+            background-image: url("data:image/jpeg;base64,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");
+            background-size: cover;
+            background-position: center;
+            width: 500px;
+            height: 500px;
+        }
+        .product-description {
+            width: 500px;
+            margin: 20px 0px 20px 0px;
+        }
+        .product-order {
+            width: 500px;
+        }
+        span {
+            font-size: 20px;
+        }
+        .btn-order {
+            margin: 0px auto 20px auto;
+            display: block;
+        }
+        .exchange-rate {
+            color: blue;
+        }
+    </style>
+    <script>
+        $(document).ready(function(){
+            show_rate()
+            showList()
+        });
+
+        function show_rate() {
+            // 환율API(서버)에 요청해 데이터를 가져온 후, 기존 환율 교체
+            // 1. 환율 API에 요청
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    // 데이터를 가져옮
+                    let rate = response[1]['rate']
+
+                    $('#now-rate').text(rate)
+               }
+            })
+        }
+
+        function order() {
+            // 1. 주문자 이름, 주소, 전화번호, 수량 데이터들을 가져온다
+            let name = $('#name').val()
+            let address = $('#address').val()
+            let tel = $('#tel').val()
+            let num = $('#num').val()
+
+            // 2. 가져온 데이터를 서버에 전송한다.
+            $.ajax({
+                type: "POST",
+                url: "/order",
+                data: {
+                    name_give:name,
+                    address_give:address,
+                    tel_give:tel,
+                    num_give:num
+                },
+                success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload()
+                }
+            })
+        }
+
+        function showList() {
+            $('#order-table').empty()
+            // 1. 서버에 요청해 주문 리스트를 가져온다.
+            $.ajax({
+                type: "GET",
+                url: "/order",
+                data: {},
+                success: function (response) {
+                    // 2. 가져온 리스트데이터를 HTML로 만들기 위해 가공한다
+                    let orders = response['order_list']
+                    for(let i=0; i<orders.length; i++) {
+                        let name = orders[i]['name']
+                        let address = orders[i]['address']
+                        let tel = orders[i]['tel']
+                        let num = orders[i]['num']
+
+                        // 3. HTML로 만들고 붙인다.
+                        let temp_html = `<tr>
+                                            <th scope="row">${name}</th>
+                                            <td>${address}</td>
+                                            <td>${tel}</td>
+                                            <td>${num}</td>
+                                        </tr>`
+
+                        $('#order-table').append(temp_html)
+                    }
+
+
+
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="product-image"></div>
+        <div class="product-description">
+        <h1>강아지 피자 <span>가격:10,000원/개</span></h1>
+        <p>강아지도 먹을 수 있는 피자! 건강에 좋으니 안심하고 선물하세요.</p>
+        <p class="exchange-rate">달러-원 환율 : <span id="now-rate">1212</span></p>
+    </div>
+        <div class="product-order">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" >주문자 이름</span>
+                </div>
+                <input id="name" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" >주소</span>
+                </div>
+                <input id="address" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" >전화번호</span>
+                </div>
+                <input id="tel" type="tel" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="num">수량</label>
+                </div>
+                <select class="custom-select" id="num">
+                    <option selected>수량을 선택해주세요</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <button onclick="order()" type="button" class="btn btn-primary btn-order">주문하기</button>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">이름</th>
+                    <th scope="col">주소</th>
+                    <th scope="col">전화번호</th>
+                    <th scope="col">수량</th>
+                </tr>
+            </thead>
+            <tbody id="order-table">
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
