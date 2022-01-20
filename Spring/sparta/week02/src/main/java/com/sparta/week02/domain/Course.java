@@ -1,11 +1,10 @@
-package com.sparta.week02.domain;
-
+package com.sparta.week02review.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Getter    // Lombok 사용 o
+@Getter
 @NoArgsConstructor // 기본생성자를 대신 생성해줍니다.
 @Entity // 테이블임을 나타냅니다.
 public class Course extends Timestamped {
@@ -20,33 +19,11 @@ public class Course extends Timestamped {
     @Column(nullable = false)
     private String tutor;
 
-//    lombok 사용 x
-//    public Long getId() {
-//        return this.id;
-//    }
-//
-//    public String getTitle() {
-//        return this.title;
-//    }
-//
-//    public String getTutor() {
-//        return this.tutor;
-//    }
-
-    // setter 설정 안하는 이유?
-    // repository에서 해줄 것이기 때문에 안함
-
-    public Course(CourseRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.tutor = requestDto.getTutor();
-    }
-
     public Course(String title, String tutor) {
         this.title = title;
         this.tutor = tutor;
     }
 
-    // 업데이트 메소드
     public void update(CourseRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.tutor = requestDto.getTutor();
