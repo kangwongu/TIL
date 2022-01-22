@@ -1,9 +1,9 @@
-package com.sparta.week02.controller;
+package com.sparta.week02review.controller;
 
-import com.sparta.week02.domain.Course;
-import com.sparta.week02.domain.CourseRepository;
-import com.sparta.week02.domain.CourseRequestDto;
-import com.sparta.week02.service.CourseService;
+import com.sparta.week02review.models.Course;
+import com.sparta.week02review.models.CourseRepository;
+import com.sparta.week02review.models.CourseRequestDto;
+import com.sparta.week02review.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +16,15 @@ public class CourseController {
     private final CourseRepository courseRepository;
     private final CourseService courseService;
 
+    // 조회
+    @GetMapping("/api/courses")
+    public List<Course> getCourses() {
+        return courseRepository.findAll();
+    }
+
     // PostMapping을 통해서, 같은 주소라도 방식이 다름을 구분합니다.
     @PostMapping("/api/courses")
     public Course createCourse(@RequestBody CourseRequestDto requestDto) {
-        // @RequestBody는 컨트롤러에서 요청을 받는 요소임을 알려줌
-        // 넘어오는 데이터를 받을 때 사용
-
         // requestDto 는, 생성 요청을 의미합니다.
         // 강의 정보를 만들기 위해서는 강의 제목과 튜터 이름이 필요하잖아요?
         // 그 정보를 가져오는 녀석입니다.
@@ -34,18 +37,12 @@ public class CourseController {
         return courseRepository.save(course);
     }
 
-    @GetMapping("/api/courses")
-    public List<Course> getCourses() {
-        return courseRepository.findAll();
-    }
-
     @PutMapping("/api/courses/{id}")
-//                                변경할 아이디,        변경할 내용
     public Long updateCourse(@PathVariable Long id, @RequestBody CourseRequestDto requestDto) {
-//                      @PathVariable이 URL의 id값과 매개변수의 id값을 매핑시켜줌
         return courseService.update(id, requestDto);
     }
 
+    // 삭제
     @DeleteMapping("/api/courses/{id}")
     public Long deleteCourse(@PathVariable Long id) {
         courseRepository.deleteById(id);

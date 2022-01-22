@@ -1,4 +1,4 @@
-package com.sparta.week02.domain;
+package com.sparta.week02review.models;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

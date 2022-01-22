@@ -1,16 +1,12 @@
-package com.sparta.week02.domain;
-
+package com.sparta.week02review.models;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@Setter
+import javax.persistence.Column;
+
 @Getter
-@RequiredArgsConstructor
 public class PersonRequestDto {
-    private final String name;
-    private final int age;
-    private final String job;
-    private final String phoneNumber;
+    private String name;
+    private int age;
+    private String address;
 }
