@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Can't find " + username));
 
-        // 찾는 유저가 DB에 있으면 UserDetails에 담아서 반환
+        // 찾는 유저가 DB에 있으면 UserDetails에 담아서 어센틱 매니저로 반환
         return new UserDetailsImpl(user);
     }
 }

@@ -33,7 +33,7 @@ public class UserService {
 
         // 회원 ID 중복 확인
         Optional<User> found = userRepository.findByUsername(username);
-        if (found.isPresent()) {
+        if (found.isPresent()) {    // null이면 false, 아니면 true
             throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
         }
 
@@ -44,7 +44,7 @@ public class UserService {
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;  // admin = false
-        if (requestDto.isAdmin()) {
+        if (requestDto.isAdmin()) { // 관리자이면 관리자 토큰을 확인
             if (!requestDto.getAdminToken().equals(ADMIN_TOKEN)) {
                 throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
             }

@@ -28,9 +28,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // POST요청은 스프링 시큐리티가 막음
-        // 회원 관리 처리 API (POST /user/**) 에 대해 CSRF 무시
-        http.csrf()
-                .ignoringAntMatchers("/user/**");
+        // POST요청을 막는 CSRF protection을 disable함
+        http.csrf().disable();
 
         http.authorizeRequests()
                 // image 폴더를 login 없이 허용
@@ -49,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     // 로그인 처리 (POST /user/login)
                     .loginProcessingUrl("/user/login")  // 스프링시큐리티의 어센틱매니저로 이동
                     // 로그인 처리 후 성공 시 URL
-                    .defaultSuccessUrl("/")
+                    .defaultSuccessUrl("/") // 로그인에 성공하면 로그인된 회원정보를 전달
                     // 로그인 처리 후 실패 시 URL
                     .failureUrl("/user/login?error")
                     .permitAll()
