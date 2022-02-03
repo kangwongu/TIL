@@ -32,10 +32,25 @@ public class User {
     @Enumerated(value = EnumType.STRING)    // DB에 저장될 때는 Enum값으로 저장하지 않고 String으로 저장
     private UserRoleEnum role;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
+    // 일반 폼 로그인 회원
     public User(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.kakaoId = null;
     }
+
+    // 카카오 로그인 회원
+    public User(String username, String password, String email, UserRoleEnum role, Long kakaoId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.kakaoId = kakaoId;
+    }
+
 }
