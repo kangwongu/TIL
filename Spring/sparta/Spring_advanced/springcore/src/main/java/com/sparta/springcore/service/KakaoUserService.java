@@ -123,22 +123,39 @@ public class KakaoUserService {
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
+
+        // DB 에 중복된 Kakao Id가 없으면 회원 가입
         if (kakaoUser == null) {
             // 회원가입
-            // username: kakao nickname
-            String nickname = kakaoUserInfo.getNickname();
 
-            // password: random UUID
-            String password = UUID.randomUUID().toString();
-            String encodedPassword = passwordEncoder.encode(password);
+            // 동일한 이메일을 가진 회원이 있는지 탐색
+            String kakaoEmail = kakaoUserInfo.getEmail();
+            User user = userRepository.findByEmail(kakaoEmail)
+                    .orElse(null);
 
-            // email: kakao email
-            String email = kakaoUserInfo.getEmail();
-            // role: 일반 사용자
-            UserRoleEnum role = UserRoleEnum.USER;
+            // 동일한 이메일을 가진 회원이 없으면 회원 가입
+            if(user == null) {
+                // username: kakao nickname
+                String nickname = kakaoUserInfo.getNickname();
 
-            kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
-            userRepository.save(kakaoUser);
+                // password: random UUID
+                String password = UUID.randomUUID().toString();
+                String encodedPassword = passwordEncoder.encode(password);
+
+                // email: kakao email
+                String email = kakaoUserInfo.getEmail();
+                // role: 일반 사용자
+                UserRoleEnum role = UserRoleEnum.USER;
+                kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
+
+            } else {
+                // 동일한 이메일을 가진 회원이 있다면, 카카오id추가
+                kakaoUser = user;
+                kakaoUser.setKakaoId(kakaoId);
+            }
+            // DB에 반영영
+           userRepository.save(kakaoUser);
+
         }
         return kakaoUser;
     }
