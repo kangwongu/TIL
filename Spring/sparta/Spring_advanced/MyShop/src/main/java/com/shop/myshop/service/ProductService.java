@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.jni.Proc;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class ProductService {
@@ -20,5 +22,11 @@ public class ProductService {
 
         // 2. 생성한 객체를 DB에 저장
         return productRepository.save(product);
+    }
+
+    // 관심상품 조회
+    public List<Product> getProduct() {
+        // 1. DB에서 데이터를 가져와 반환한다
+        return productRepository.findAll();
     }
 }
