@@ -9,10 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class) // Mockito 프레임워크 사용
 class SearchRequestServiceTest {
 
-    @Mock
+    @Mock   // 가짜 객체를 생성
     NaverShopSearch naverShopSearch;
 
     private String query;

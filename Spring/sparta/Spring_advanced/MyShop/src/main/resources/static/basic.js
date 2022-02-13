@@ -143,7 +143,8 @@ function showProduct() {
             for(let i=0; i<response.length; i++) {
                 let product = response[i];
                 let tempHtml = addProductItem(product);
-                $('#product-container').append(tempHtml);
+                $('#product-contai' +
+                    'ner').append(tempHtml);
             }
         }
     });
@@ -166,7 +167,7 @@ function addProductItem(product) {
                 <div class="lprice">
                     <span>${numberWithCommas(product.lprice)}</span>원
                 </div>
-                <div class="isgood">
+                <div class="isgood ${product.lprice <= product.myprice ? '' : 'none'}">
                     최저가
                 </div>
             </div>
@@ -174,6 +175,7 @@ function addProductItem(product) {
 
 }
 
+// 관심 상품의 희망 가격 변경
 function setMyprice() {
     /**
      * 숙제! myprice 값 설정하기.
@@ -187,5 +189,22 @@ function setMyprice() {
      * 5, 성공적으로 등록되었음을 알리는 alert를 띄운다.
      * 6. 창을 새로고침한다. window.location.reload();
      */
+    let myprice = $('#myprice').val();
+    if(myprice==null) {
+        alert('가격을 입력하세요');
+        return false;
+    }
 
+    let data = {'myprice':myprice};
+    $.ajax({
+        type: "PUT",
+        url: `/api/products/${targetId}`,
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function(response){
+            $('#container').removeClass('active');
+            alert('희망가격이 성공적으로 설정되었습니다.');
+            window.location.reload();
+        }
+    });
 }

@@ -1,5 +1,6 @@
 package com.shop.myshop.model;
 
+import com.shop.myshop.dto.ProductMyPriceDto;
 import com.shop.myshop.dto.ProductRequestDto;
 import com.shop.myshop.utils.Timestamped;
 import com.shop.myshop.validation.ProductValidator;
@@ -48,4 +49,7 @@ public class Product extends Timestamped {
     }
 
 
+    public void update(ProductMyPriceDto productMyPriceDto) {
+        this.myprice = productMyPriceDto.getMyprice();
+    }
 }

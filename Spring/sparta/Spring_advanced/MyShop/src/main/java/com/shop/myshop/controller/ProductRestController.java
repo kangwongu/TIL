@@ -1,14 +1,12 @@
 package com.shop.myshop.controller;
 
+import com.shop.myshop.dto.ProductMyPriceDto;
 import com.shop.myshop.dto.ProductRequestDto;
 import com.shop.myshop.model.Product;
 import com.shop.myshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +33,11 @@ public class ProductRestController {
     @GetMapping("/api/products")
     public List<Product> getProduct() {
         return productService.getProduct();
+    }
+
+    // 관심 상품 가격 변경
+    @PutMapping("/api/products/{id}")
+    public Long updateMyPrice(@PathVariable Long id, @RequestBody ProductMyPriceDto productMyPriceDto) {
+        return productService.updateMyPrice(id, productMyPriceDto);
     }
 }

@@ -32,7 +32,7 @@ public class NaverShopSearch {
         System.out.println(response);
 
         return response;
-        // 응답받은 JSON의 items배열에 검색결과가 내려옴옴
+        // 응답받은 JSON의 items배열에 검색결과가 내려옴
     }
 
     public List<ItemDto> fromJSONtoItems(String result) {
@@ -47,5 +47,11 @@ public class NaverShopSearch {
         }
 
         return itemDtoList;
+    }
+
+    public static void main(String[] args) {
+        NaverShopSearch naverShopSearch = new NaverShopSearch();
+        String result = naverShopSearch.search("아이맥");
+        naverShopSearch.fromJSONtoItems(result);
     }
 }
