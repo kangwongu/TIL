@@ -1,5 +1,6 @@
 package com.shop.myshop.service;
 
+import com.shop.myshop.dto.ItemDto;
 import com.shop.myshop.dto.ProductMyPriceDto;
 import com.shop.myshop.dto.ProductRequestDto;
 import com.shop.myshop.model.Product;
@@ -41,5 +42,16 @@ public class ProductService {
         // 2. 찾은 데이터의 myprice값을 업데이트
         product.update(productMyPriceDto);
         return product.getId();
+    }
+
+    @Transactional
+    public void updateBySearch(Long id, ItemDto itemDto) {
+        // 1. 해당 id의 데이터를 DB에서 찾는다.
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않아요")
+        );
+
+        // 2. 찾은 데이터의 price값을 업데이트
+        product.updateByItemDto(itemDto);
     }
 }
