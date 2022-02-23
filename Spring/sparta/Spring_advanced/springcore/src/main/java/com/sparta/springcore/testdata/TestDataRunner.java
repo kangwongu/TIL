@@ -1,9 +1,11 @@
 package com.sparta.springcore.testdata;
 
 import com.sparta.springcore.dto.ItemDto;
+import com.sparta.springcore.model.Folder;
 import com.sparta.springcore.model.Product;
 import com.sparta.springcore.model.User;
 import com.sparta.springcore.model.UserRoleEnum;
+import com.sparta.springcore.repository.FolderRepository;
 import com.sparta.springcore.repository.ProductRepository;
 import com.sparta.springcore.repository.UserRepository;
 import com.sparta.springcore.service.ItemSearchService;
@@ -31,6 +33,9 @@ public class TestDataRunner implements ApplicationRunner {
     ProductRepository productRepository;
 
     @Autowired
+    FolderRepository folderRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -43,22 +48,28 @@ public class TestDataRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 테스트 User 생성
-        User testUser = new User("슈가", passwordEncoder.encode("123"), "sugar@sparta.com", UserRoleEnum.USER);
-        testUser = userRepository.save(testUser);
+        User testUser1 = new User("슈가", passwordEncoder.encode("123"), "sugar@sparta.com", UserRoleEnum.USER);
+        User testUser2 = new User("제이홉", passwordEncoder.encode("123"), "j@sparta.com", UserRoleEnum.USER);
+        User testAdminUser1 = new User("아미", passwordEncoder.encode("123"), "army@sparta.com", UserRoleEnum.ADMIN);
+
+        // save하면 생성되는 1차 캐시의 데이터를 기존 객체에 덮어 씌움
+        testUser1 = userRepository.save(testUser1);
+        testUser2 = userRepository.save(testUser2);
+        testAdminUser1 = userRepository.save(testAdminUser1);
 
         // 테스트 User 의 관심상품 등록
         // 검색어 당 관심상품 10개 등록
-        createTestData(testUser, "신발");
-        createTestData(testUser, "과자");
-        createTestData(testUser, "키보드");
-        createTestData(testUser, "휴지");
-        createTestData(testUser, "휴대폰");
-        createTestData(testUser, "앨범");
-        createTestData(testUser, "헤드폰");
-        createTestData(testUser, "이어폰");
-        createTestData(testUser, "노트북");
-        createTestData(testUser, "무선 이어폰");
-        createTestData(testUser, "모니터");
+        createTestData(testUser1, "신발");
+        createTestData(testUser1, "과자");
+        createTestData(testUser1, "키보드");
+        createTestData(testUser1, "휴지");
+        createTestData(testUser1, "휴대폰");
+        createTestData(testUser1, "앨범");
+        createTestData(testUser1, "헤드폰");
+        createTestData(testUser1, "이어폰");
+        createTestData(testUser1, "노트북");
+        createTestData(testUser1, "무선 이어폰");
+        createTestData(testUser1, "모니터");
     }
 
     private void createTestData(User user, String searchWord) throws IOException {
@@ -86,6 +97,10 @@ public class TestDataRunner implements ApplicationRunner {
         }
 
         productRepository.saveAll(productList);
+
+        // 폴더 추가
+        Folder folder = new Folder(searchWord, user);
+        folderRepository.save(folder);
     }
 
     public int getRandomNumber(int min, int max) {
