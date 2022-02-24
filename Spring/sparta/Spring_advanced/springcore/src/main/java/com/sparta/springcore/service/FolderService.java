@@ -45,13 +45,13 @@ public class FolderService {
 
 
     public Folder createFolderOrThrow(String folderName, User user) {
-// 입력으로 들어온 폴더 이름이 이미 존재하는 경우, Exception 발생
+        // 입력으로 들어온 폴더 이름이 이미 존재하는 경우, Exception 발생
         boolean isExistFolder = folderRepository.existsByUserAndName(user, folderName);
         if (isExistFolder) {
             throw new IllegalArgumentException("중복된 폴더명을 제거해 주세요! 폴더명: " + folderName);
         }
 
-// 폴더명 저장
+        // 폴더명 저장
         Folder folder = new Folder(folderName, user);
         return folderRepository.save(folder);
     }
