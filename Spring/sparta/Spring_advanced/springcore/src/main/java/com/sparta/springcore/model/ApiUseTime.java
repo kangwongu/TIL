@@ -24,13 +24,18 @@ public class ApiUseTime {
     @Column(nullable = false)
     private Long totalTime;
 
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long totalCount;
+
     public ApiUseTime(User user, long totalTime) {
         this.user = user;
         this.totalTime = totalTime;
+        this.totalCount = 1L;
     }
 
-    // 실행시간 누적
+    // 실행시간, 호출횟수 누적
     public void addUseTime(long useTime) {
         this.totalTime += useTime;
+        this.totalCount += 1L;
     }
 }
