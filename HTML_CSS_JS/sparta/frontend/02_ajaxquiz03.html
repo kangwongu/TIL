@@ -18,22 +18,17 @@
 
     <script>
       function q1() {
-        // 고양이 API에 요청해서 데이터를 받아오고, 가공 후, 이미지 교체
-
-
-        // 1. 고양이 API(서버)에 요청
+        // 여기에 코드를 입력하세요
         $.ajax({
-          type: "GET",
-          url: "https://api.thecatapi.com/v1/images/search",
-          data: {},
-          success: function (response) {
-            // 2.고양이 API에서 데이터(이미지 URL)를 받는다.
-            let url = response[0]['url']
+                type: "GET",
+                url: "https://api.thecatapi.com/v1/images/search",
+                data: {},
+                success: function (response) {
+                  let url = response[0]['url'];
+                  $("#img-cat").attr("src", url);
 
-            // 3. 이미지 URL 교체
-            console.log($('#img-cat').attr('src', url))
-          }
-        })
+                }
+            })
       }
     </script>
 

@@ -49,6 +49,40 @@
         }
     </style>
     <script>
+        $(document).ready(function () {
+            listing();
+        });
+
+        function listing() {
+            $('#cards-box').empty();
+            $.ajax({
+                type: "GET",
+                url: "http://spartacodingclub.shop/post",
+                data: {},
+                success: function (response) {
+                    let rows = response['articles'];
+                    for (let i=0; i<rows.length; i++) {
+                        let comment = rows[i]['comment'];
+                        let desc = rows[i]['desc'];
+                        let image = rows[i]['image'];
+                        let title = rows[i]['title'];
+                        let url = rows[i]['url'];
+
+                        let temp_html = `<div class="card">
+                                            <img class="card-img-top" src="${image}" alt="Card image cap">
+                                            <div class="card-body">
+                                                <a href="${url}" class="card_title">${title}</a>
+                                                <p class="card-text">${desc}</p>
+                                                <p class="card-text comment">${comment}</p>
+                                            </div>
+                                        </div>`;
+
+                        $('#cards-box').append(temp_html);
+                    }
+                }
+            })
+        }
+
         function openclose() {
             // 1. 포스트박스의 display상태값을 가져온다
             // 2. block이면 포스트박스를 숨기고 block이 아니면 포스트박스를 보여줌
@@ -67,13 +101,13 @@
 <body>
     <div class="wrap">
         <div class="jumbotron">
-        <h1 class="display-4">나홀로 링크 메모장!</h1>
-        <p class="lead">중요한 링크를 저장해두고, 나중에 볼 수 있는 공간입니다</p>
-        <hr class="my-4">
-        <p class="lead">
-            <a class="btn btn-primary btn-lg" id="btn-posting-box" href="#" onclick="openclose()" role="button">포스팅박스 열기</a>
-        </p>
-    </div>
+            <h1 class="display-4">나홀로 링크 메모장!</h1>
+            <p class="lead">중요한 링크를 저장해두고, 나중에 볼 수 있는 공간입니다</p>
+            <hr class="my-4">
+            <p class="lead">
+                <a class="btn btn-primary btn-lg" id="btn-posting-box" href="#" onclick="openclose()" role="button">포스팅박스 열기</a>
+            </p>
+        </div>
         <div class="posting-box" id="post-box">
             <div class="form-group">
                 <label>아티클 URL</label>
@@ -88,13 +122,13 @@
         </div>
         <div class="card-columns" id="cards-box">
             <div class="card"       >
-            <img class="card-img-top" src="https://mblogthumb-phinf.pstatic.net/MjAyMDEwMzBfNzUg/MDAxNjA0MDU2MjY0NDkz.N5Y0fbz_mil4wVkp2dt0zVqRWaz1oqs_XSXK_lbg0Ggg.7bmvb5V1ljPkfuiD398fCQVPzf3itBI9yHDVke4Pnyog.JPEG.baek1047/IMG%EF%BC%BF5371.jpg?type=w800" alt="Card image cap">
-            <div class="card-body">
-                <a href="#" class="card_title">여기 기사 제목이 들어가요</a>
-                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-                <p class="card-text comment">여기에 코멘트가 들어갑니다</p>
+                <img class="card-img-top" src="https://mblogthumb-phinf.pstatic.net/MjAyMDEwMzBfNzUg/MDAxNjA0MDU2MjY0NDkz.N5Y0fbz_mil4wVkp2dt0zVqRWaz1oqs_XSXK_lbg0Ggg.7bmvb5V1ljPkfuiD398fCQVPzf3itBI9yHDVke4Pnyog.JPEG.baek1047/IMG%EF%BC%BF5371.jpg?type=w800" alt="Card image cap">
+                <div class="card-body">
+                    <a href="#" class="card_title">여기 기사 제목이 들어가요</a>
+                    <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                    <p class="card-text comment">여기에 코멘트가 들어갑니다</p>
+                </div>
             </div>
-        </div>
             <div class="card"       >
             <img class="card-img-top" src="https://mblogthumb-phinf.pstatic.net/MjAyMDEwMzBfNzUg/MDAxNjA0MDU2MjY0NDkz.N5Y0fbz_mil4wVkp2dt0zVqRWaz1oqs_XSXK_lbg0Ggg.7bmvb5V1ljPkfuiD398fCQVPzf3itBI9yHDVke4Pnyog.JPEG.baek1047/IMG%EF%BC%BF5371.jpg?type=w800" alt="Card image cap">
             <div class="card-body">
