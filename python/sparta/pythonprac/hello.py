@@ -2,9 +2,12 @@
 # 코드단에서 요청하기, 요청으로 가져온 html에서 내가 원하는 정보를 가져오는 것
 # requests로 요청하고 beautifulsoup으로 솎아냄
 
-
 import requests
 from bs4 import BeautifulSoup
+
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.dbsparta
 
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
 data = requests.get('https://movie.naver.com/movie/sdb/rank/rmovie.nhn?sel=pnt&date=20200303',headers=headers)
@@ -24,7 +27,12 @@ for tr in trs:
         star = tr.select_one('td.point').text
         title = a_tag.text
         rank = tr.select_one('td:nth-child(1) > img')['alt']
-        print(rank, title, star)
+        doc = {
+            'rank':rank,
+            'title':title,
+            'star':star
+        }
+        db.movies.insert_one(doc)
 
 
 
