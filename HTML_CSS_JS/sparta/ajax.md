@@ -4,14 +4,14 @@
 ## Ajax 형식
 ``` javascript
 $.ajax({
-	  type: "HTTP METHOD",  // GET / POST등
-	  url: "URL주소",       // URL
-	  data: {},             // POST시에만 data를 넣어서 서버에 요청
-	  success: function(response){
-      // 요청 성공 시, response에 서버에서 응답한 값이 들어감
-			...
-	  }
-	})
+  type: "HTTP METHOD",  // GET / POST등
+  url: "URL주소",       // URL
+  data: {},             // POST시에만 data를 넣어서 서버에 요청
+  success: function(response){
+    // 요청 성공 시, response에 서버에서 응답한 값이 들어감
+    ...
+  }
+})
 ```
 <br>
 
