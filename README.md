@@ -12,3 +12,4 @@
 
 ## 웹 기초
 - [웹 동작원리 이해(클라이언트-서버 통신)](https://github.com/kangwongu/TIL/blob/master/HTML_CSS_JS/sparta/web_basic.md)
+- [Ajax](https://github.com/kangwongu/TIL/blob/master/HTML_CSS_JS/sparta/ajax.md)
