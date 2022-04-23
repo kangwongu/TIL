@@ -51,7 +51,7 @@ def test_get():
 ```jsx
 $.ajax({
     type: "GET",
-    url: "/test",  // /test로 sample_give=샘플 요청
+    url: "/test",  // /test로 요청
     data: {},
     success: function(response){
       // 서버로부터 받은 데이터를 가공
