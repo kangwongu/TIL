@@ -11,15 +11,15 @@
 2. 협업해서 하나의 프로젝트를 만드는데 유용
 	- 누가, 언제, 어떤 부분을 수정했는지 파악이 용이함
 
-
+<br>
 
 ## Github?
 - Git으로 된 프로젝트 저장 공간을 제공
 - Git을 편하게 사용하기 위한 여러가지 부가기능을 가지고 있음
 
+<br>
 
-
-## Git commit
+## Commit
 - 현재 프로젝트의 상태를 저장하는 기능
 - commit을 통해 누가, 언제, 어떤 부분을 바꾸었는지 확인할 수 있음
 
@@ -27,34 +27,41 @@
 ```
 $ git commit -m "커밋 메시지"
 ```
+<br>
 
 ## 원격 Repo와 로컬 Repo
 - 원격 Repo는 Github에 저장되어 있는 리포지토리를 의미
 - 로컬 Repo는 내 컴퓨터에 저장되어 있는 리포지토리를 의미
+- Repo는 무엇을 의미할까?
+	- Git으로 관리되는 프로젝트
 
-
+<br>
 
 ## Tracking
 - 로컬 Repo가 원격 Repo를 tracking하는 것
 - 로컬 Repo와 원격 Repo를 연결하는 것
 
+<br>
 
-
-## Git push
+## Push
 - 로컬 Repo에 commit한 자료들을 원격 Repo에 저장하는 것
 ```
 $ git push origin [브랜치 네임]
 ```
 
-## Git pull
-- 원격 Repo에 저장되어 있는 자료들을 로컬 Repo로 가져오는 것
+<br>
+
+## Pull
+- 원격 Repo에 저장되어 있는 commit된 자료들을 로컬 Repo로 가져오는 것
 
 원격 저장소의 커밋을 지역 저장소로 옮겨옴 (업데이트)
 ```
 $ git pull origin [브랜치 네임]
 ```
 
-## Git clone
+<br>
+
+## Clone
 - 원격 Repo에 저장되어 있는 프로젝트를 로컬 Repo에 복제할 때 사용
 
 
@@ -63,6 +70,7 @@ $ git pull origin [브랜치 네임]
 $ git clone [원격 저장소 주소] .  // .을 붙여야 특정 폴더에 원격 저장소 복제 가능
 ```
 
+<br>
 
 ## Issue
 프로젝트에서 해결해야하는 문제를 의미한다. 
@@ -75,25 +83,28 @@ $ git clone [원격 저장소 주소] .  // .을 붙여야 특정 폴더에 원�
 
 Issue를 통해 작업기록을 체계적으로 관리할 수 있다.
 
+<br>
 
 ## Branch
-팀원간 기능에 맞게 나누어 작업할 수 있다.
-
-branch를 나누고 나면, 앞으로 하는 commit은 최근에 생성한 branch에만 반영된다.
-
+팀원간 기능에 맞게 나누어 작업할 수 있다.  
+branch를 나누고 나면, 앞으로 하는 commit은 최근에 생성한 branch에만 반영된다.  
 작업이 완료되면 작업한 branch는 삭제한다.
 >현재 작업하는 브랜치를 선택하는 것을 **체크아웃**이라고 한다.
+
+<br>
 
 새로운 브랜치 생성하기
 ```
 $ git branch [브랜치명]
 ```
 
+<br>
 
 브랜치 조회하기
 ```
 $ git branch
 ```
+<br>
 
 [브랜치명]으로 체크아웃(이동)
 ```
@@ -101,30 +112,59 @@ $ git checkout [브랜치명]
 $ git checkout -b [브랜치명]  // 브랜치만들고 바로이동
 ```
 
+<br>
 
 브랜치 삭제
 ```
 $ git branch -D [브랜치명]
 ```
 
+<br>
 
 ## Merge
-branch를 다른 branch에 합치는 것
-
+branch를 다른 branch에 합치는 것  
 즉, 특정 branch의 commit을 다른 branch의 commit 내역에 반영시키는 것
 
-
+<br>
 
 [브랜치명]을 main 브랜치와 병합
 ```
 $ git merge [브랜치명]
 $ git merge [브랜치명] --edit  // 병합 후 바로 vim 편집기로 커밋 메시지 수정 가능
 $ git merge [브랜치명] --no-edit  // 커밋 메시지 수정없이 바로 병합
+
 ```
+<br>
+
 Merge 취소하기
 ```
 $ git merge --abort
 ```
 
+<br>
+
 ## Merge Conflict (병합 충돌)
-Merge하는 과정에서 동일한 부분이 수정된 게 발견되면 발생
+Merge하는 과정에서 동일한 부분이 수정된 게 발견되면 발생한다
+
+``` text
+<<<<<<< HEAD
+{현재 브랜치의 다른 파일 내용}
+=======
+{충돌나는 브랜치명 또는 commit에서의 다른 파일 내용}
+>>>>>>> 충돌나는 브랜치명 또는 commmit 아이디
+```
+충돌을 해결 하기 위해선, '<<<<<<< HEAD', '=======', '>>>>>>> 충돌나는 브랜치명 또는 commmit 아이디'부분을 삭제하면 된다.
+
+<br>
+
+## PR (Pull Request)
+작업내역을 바로 merge 하지 않고, 참여하고 있는 프로젝트에 내 작업(branch)를 merge해 달라고 요청하는 것
+
+**코드 리뷰**
+- 주로 PR한 내역에서 댓글을 달면서 리뷰를 남기는 방식으로 코드 리뷰를 진행한다.
+
+
+<br>
+
+## gitignore
+공유되거나, 공개되면 안되는 파일들을 Github repo에 올라가지 않도록 Git이 해당 파일들을 무시하게 하는 설정
