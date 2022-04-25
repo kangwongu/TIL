@@ -56,6 +56,9 @@
 
 AWS SDK설치를 통해 CLI환경에서 AWS 작업을 할 수 있다.
 
+aws configure 명령어로 AWS 계정 연결(인증 정보 설정)
+을 하고 나면, 파이썬의 boto3 라이브러리로 S3에 접근할 수 있다.
+
 예시 (버킷이름에 업로드하기)
 ``` bash
 aws s3 cp {파일명} s3://{버킷이름} --acl public-read
