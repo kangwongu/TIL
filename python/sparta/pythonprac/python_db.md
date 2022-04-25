@@ -15,6 +15,15 @@ client = MongoClient('localhost', 27017)
 db = client.dbsparta
 ```
 
+### 서버에서 설치한 MongoDB인 경우
+
+``` python
+# 서버에서 설치한 MongoDB에서는 ID,PWD 필요 / ID:test, PWD:test로 접속
+client = MongoClient('mongodb://test:test@localhost', 27017)
+# client = MongoClient('localhost', 27017)
+```
+
+
 ### 예제 코드
 **Insert**
 ``` python
