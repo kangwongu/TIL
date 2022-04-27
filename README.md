@@ -21,3 +21,4 @@
 
 ## AWS
 - [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
+- [프론트/백 분리, 배포자동화](https://github.com/kangwongu/TIL/blob/master/AWS/aws_dividing.md)
