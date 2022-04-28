@@ -18,6 +18,7 @@
 ## Python
 - [pymongo로 MongoDB 사용하기](https://github.com/kangwongu/TIL/blob/master/python/sparta/pythonprac/python_db.md)
 - [Flask로 서버만들기](https://github.com/kangwongu/TIL/blob/master/python/sparta/pythonprac/python_flask.md)
+- [파일 업로드하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project01/fileupload.md)
 
 ## AWS
 - [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
