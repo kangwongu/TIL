@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+        <title>간단한 지도 표시하기</title>
+        <script type="text/javascript"
+                src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=[API 클라이언트 키]"></script>
+        <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <style>
+            #map {
+                width: 100%;
+                height: 400px;
+            }
+        </style>
+
+        <script>
+            $(document).ready(function () {
+                // 네이버에서 지도를 만든다는 뜻
+                // let map = new naver.maps.Map('map', {
+                //     // (위도, 경도)값의 위치를 지도의 중앙에 두고
+                //     center: new naver.maps.LatLng(37.4981125, 127.0379399),
+                //     // 줌을 10정도 땡기기
+                //     zoom: 10
+                // });
+
+                let map = new naver.maps.Map('map', {
+                    center: new naver.maps.LatLng(37.4981125, 127.0379399),
+                    zoom: 10,
+                    // 확대, 축소 컨트롤 하는 설정을 켜기
+                    zoomControl: true,
+                    zoomControlOptions: {
+                        // 확대/축소 버튼의 옵션
+                        style: naver.maps.ZoomControlStyle.SMALL,
+                        position: naver.maps.Position.TOP_RIGHT
+                    }
+                });
+
+                // 마커 띄우기
+                // let marker = new naver.maps.Marker({
+                //     // 어느 위치에 보여줄 건지
+                //     position: new naver.maps.LatLng(37.4981125, 127.0379399),
+                //     // 어느 지도에 보여줄 건지
+                //     map: map
+                // });
+
+                // 마커 이미지 바꿔서 지도에 출력하기
+                let marker = new naver.maps.Marker({
+                    position: new naver.maps.LatLng(37.4981125, 127.0379399),
+                    map: map,
+                    icon: "{{ url_for('static', filename='rtan_heart.png') }}"
+                });
+
+                let infowindow = new naver.maps.InfoWindow({
+                    content: `<div style="width: 50px;height: 20px;text-align: center"><h5>안녕!</h5></div>`,
+                });
+                infowindow.open(map, marker);
+
+            })
+        </script>
+    </head>
+    <body>
+        <div id="map"></div>
+    </body>
+</html>
