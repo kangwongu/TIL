@@ -7,6 +7,14 @@
 
 큰 그림과 흐름위주로 정리하기 (간단한 개념과 사용법위주)
 
+## 기능 구현
+- Python
+  - [파일 업로드하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project01/fileupload.md)
+  - [Selenium 사용하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project03/selenium.md)
+  - [JWT로 로그인 구현하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project04/jwt.md)
+  - [해시함수로 회원가입 구현해보기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project04/register.md)
+- JS
+  - [정규표현식 활용](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project04/regular_expressions.md)
 
 
 ## Git
@@ -18,12 +26,13 @@
 - [Ajax](https://github.com/kangwongu/TIL/blob/master/HTML_CSS_JS/sparta/ajax.md)
 - [정적 웹페이지/동적 웹페이지](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project02/static_dynamic_webpage.md)
 
+## CSS
+- [Bulma 프레임워크](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project04/bulma.md)
+
 ## Python
 - [pymongo로 MongoDB 사용하기](https://github.com/kangwongu/TIL/blob/master/python/sparta/pythonprac/python_db.md)
 - [Flask로 서버만들기](https://github.com/kangwongu/TIL/blob/master/python/sparta/pythonprac/python_flask.md)
-- [파일 업로드하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project01/fileupload.md)
 - [Jinja2 사용하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project02/Jinja2.md)
-- [Selenium 사용하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project03/selenium.md)
 
 ## AWS
 - [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
