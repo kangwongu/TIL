@@ -123,6 +123,7 @@ let map = new naver.maps.Map('map', {
 <br>
 
 ### 마커 띄워보기
+
 ```jsx
 // 마커 띄우기
 let marker = new naver.maps.Marker({
@@ -140,3 +141,287 @@ let marker = new naver.maps.Marker({
 `icon: "{{ url_for('static', filename='rtan_heart.png') }}"`
 
 마커 이미지를 바꾸려면 위의 코드를 마커 띄우는 코드에 추가한다.
+
+<br>
+
+### 정보창 (infoWindow) 띄워보기
+
+```jsx
+// 정보창 띄우기
+let infowindow = new naver.maps.InfoWindow({
+    // 이 내용을 정보창으로 보여주겠다는 의미
+    content: `<div style="width: 50px;height: 20px;text-align: center"><h5>안녕!</h5></div>`,
+});
+// 만든 정보창을 열겠다는 명령어 (내가 만든 맵, 지정한 마커)
+infowindow.open(map, marker);
+```
+
+정보창을 띄울땐 naver.maps.InfoWindow({})
+
+정보창을 닫을 땐 아래 코드를 추가
+
+`infowindow.close(); // 닫기`
+
+<br>
+
+### 리스너를 추가해 사용자 동작에 따라 다르게 구현해보기
+
+```jsx
+// 네이버 맵의 이벤트 등록 ( 사용자가 마커에 클릭을 하는지 체크 )
+naver.maps.Event.addListener(marker, "click", function () {
+console.log(infowindow.getMap()); // 정보창이 열려있을 때는 연결된 지도를 반환하고 닫혀있을 때는 null을 반환
+    if (infowindow.getMap()) {
+        infowindow.close();
+    } else {
+        infowindow.open(map, marker);
+    }
+});
+```
+
+사용자가 마커를 클릭하면 정보창을 띄우고 닫는 기능
+
+<br>
+
+## Selenium과 지도 API 활용해보기
+
+
+### Selenium으로 스크래핑 하기
+
+SBS TV 맛집사이트에서 스크래핑
+
+```python
+from selenium import webdriver
+from bs4 import BeautifulSoup
+import time
+from selenium.common.exceptions import NoSuchElementException
+from pymongo import MongoClient
+import requests
+
+client = MongoClient('[AWS주소]', 27017, username="아이디", password="비밀번호")
+db = client.dbsparta_plus_week3
+
+driver = webdriver.Chrome('./chromedriver')
+
+url = "http://matstar.sbs.co.kr/location.html"
+
+driver.get(url)
+time.sleep(5)
+
+# 더보기 버튼 클릭하기 (10번 클릭)
+for i in range(10):
+    try:
+        btn_more = driver.find_element_by_css_selector("#foodstar-front-location-curation-more-self > div > button")
+        btn_more.click()
+        time.sleep(5)
+    except NoSuchElementException:
+        break
+
+req = driver.page_source
+driver.quit()
+
+soup = BeautifulSoup(req, 'html.parser')
+
+places = soup.select("ul.restaurant_list > div > div > li > div > a")
+print(len(places))
+
+for place in places:
+    title = place.select_one("strong.box_module_title").text
+    address = place.select_one("div.box_module_cont > div > div > div.mil_inner_spot > span.il_text").text
+    category = place.select_one("div.box_module_cont > div > div > div.mil_inner_kind > span.il_text").text
+    show, episode = place.select_one("div.box_module_cont > div > div > div.mil_inner_tv > span.il_text").text.rsplit(" ", 1)
+```
+
+Selenium을 이용해 해당 브라우저에서 더보기 버튼을 클릭하고 스크래핑 하는 코드
+
+<br>
+
+### 스크래핑한 정보를 지도에 띄워보기
+
+맛집 정보를 스크래핑 해왔는데, 이 맛집의 위치를 지도에 띄워보자
+
+주소를 좌표로 변환해주는 geocoding API를 활용한다.
+
+요청 방법
+
+```html
+curl -G "[https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode](https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode)" \
+--data-urlencode "query={주소}" \
+--data-urlencode "coordinate={검색_중심_좌표}" \
+-H "X-NCP-APIGW-API-KEY-ID: {애플리케이션 등록 시 발급받은 client id값}" \
+-H "X-NCP-APIGW-API-KEY: {애플리케이션 등록 시 발급받은 client secret값}" -v
+```
+
+<br>
+
+스크래핑해서 가져온 맛집 주소를 geocoding API로 요청해서 해당 주소의 위도, 경도값을 알아온다. (지도에 표시하기 위해)
+
+```python
+# geocoding API 사용하기
+headers = {
+    "X-NCP-APIGW-API-KEY-ID": "[내 클라이언트 아이디]",
+    "X-NCP-APIGW-API-KEY": "[내 클라이언트 시크릿 키]"
+}
+# 스크래핑해서 가져온 결과값 중 하나인 address로 geocoding API 요청
+    r = requests.get(f"https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query={address}", headers=headers)
+    response = r.json()
+    # 요청이 성공적이었으면 실행
+    if response["status"] == "OK":
+        if len(response["addresses"]) > 0:
+						# 위도, 경도값 가져오기
+            x = float(response["addresses"][0]["x"])
+            y = float(response["addresses"][0]["y"])
+            print(title, address, category, show, episode, x, y)
+
+            # DB에 저장하기
+            doc = {
+                "title": title,
+                "address": address,
+                "category": category,
+                "show": show,
+                "episode": episode,
+                # 위도, 경도값도 같이 저장
+                "mapx": x,
+                "mapy": y}
+            db.matjips.insert_one(doc)
+
+        else:
+            print(title, "좌표를 찾지 못했습니다")
+```
+맛집의 위도, 경도값을 알아낸 후에 DB에 저장한다
+
+<br>
+
+### DB에 저장되어 있는 맛집 리스트를 가져오기
+``` javascript
+function get_matjips() {
+    $('#matjip-box').empty();
+    $.ajax({
+        type: "GET",
+        url: '/matjip',
+        data: {},
+        success: function (response) {
+            let matjips = response["matjip_list"]
+            for (let i = 0; i < matjips.length; i++) {
+                let matjip = matjips[i]
+                console.log(matjip)
+                make_card(i, matjip)  // 맛집 정보를 html카드로 만들기
+                let marker = make_marker(matjip)  // 맛집 위치를 지도에 마커로 띄우기
+                add_info(i, marker, matjip)  // 마커에 정보창 띄우기
+            }
+        }
+    });
+}
+```
+페이지에 접속할 때마다, 맛집 리스트를 가져오도록 구성했다.  
+맛집리스트를 가져와 HTML로 만들어 붙이고, 해당하는 맛집 위치를 지도에 마커로 띄우고 정보창까지 띄워보는 것이 할 일
+
+<br>
+
+### 클라이언트에서 DB에 저장된 카드들을 HTML로 표시하기
+```jsx
+function make_card(i, matjip) {
+    let temp_html = `<div class="card" id="card-${i}">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="#" class="matjip-title">${matjip.title}</a></h5>
+                            <h6 class="card-subtitle mb-2 text-muted">${matjip.category}</h6>
+                            <p class="card-text">${matjip.address}</p>
+                            <p class="card-text" style="color:blue;">${matjip.show}</p>
+                        </div>
+                    </div>`
+    $('#matjip-box').append(temp_html);
+```
+DB에 저장되어 있는 맛집 리스트를 불러와 HTML카드로 만들어 보여준다
+
+<br>
+
+### 각 맛집의 위도, 경도값에 마커 띄우기
+```jsx
+// 맛집 정보를 가지고 마커 만들기
+function make_marker(matjip) {
+    let marker = new naver.maps.Marker({
+        // 맛집의 위도 경도를 넣어줌
+        position: new naver.maps.LatLng(matjip["mapy"], matjip["mapx"]),
+map:map
+});
+    markers.push(marker)
+    return marker
+}
+```
+해당 맛집의 위도, 경도를 이용해 지도에 마커를 띄운다.
+
+<br>
+
+### 마커를 클릭했을 때, 정보창 띄우고 닫기
+```jsx
+// 마커를 클릭했을 때, 정보창 띄우기
+function add_info(i, marker, matjip) {
+    // 띄울 정보창
+    let html_temp = `<div class="iw-inner">
+                        <h5>${matjip['title']}</h5>
+                        <p>${matjip['address']}
+                    </div>`;
+
+    let infowindow = new naver.maps.InfoWindow({
+        content: html_temp,
+        maxWidth: 200,
+        backgroundColor: "#fff",
+        borderColor: "#888",
+        borderWidth: 2,
+        anchorSize: new naver.maps.Size(15, 15),
+        anchorSkew: true,
+        anchorColor: "#fff",
+        pixelOffset: new naver.maps.Point(10, -10)
+    });
+		infowindows.push(infowindow)
+		// 마커를 클릭하면 정보창을 띄우고 닫게 하기기
+    naver.maps.Event.addListener(marker, "click", function (e) {
+        if (infowindow.getMap()) {
+            infowindow.close();
+        } else {
+            infowindow.open(map, marker);
+						map.setCenter(infowindow.position)// 정보창을 지도 가운데에 띄우기
+						// 선택한 카드위치로 스크롤 하기
+            $("#matjip-box").animate({
+                scrollTop: $("#matjip-box").get(0).scrollTop + $(`#card-${i}`).position().top
+            }, 2000);
+				}
+		});
+}
+```
+
+단순히 정보창만 띄우는 게 아니라, 정보창을 지도 가운데에 띄우거나, 마커를 클릭하면 해당 맛집 리스트로 스크롤하는 기능들을 추가할 수 있다.
+
+<br>
+
+### 리스트 제목 클릭하면, 마커와 정보창 띄우기
+
+a태그의 href속성을 변경
+
+```html
+<div class="card" id="card-${i}">
+    <div class="card-body">
+        <h5 class="card-title"><a href="javascript:click2center('${i}')" class="matjip-title">${matjip.title}</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">${matjip.category}</h6>
+        <p class="card-text">${matjip.address}</p>
+        <p class="card-text" style="color:blue;">${matjip.show}</p>
+    </div>
+</div>
+```
+
+클릭하면 js함수가 실행되도록 변경
+
+리스트의 제목을 클릭하면 click2center(i)함수가 실행
+
+```jsx
+function click2center(i) {
+    let marker = markers[i]
+    let infowindow = infowindows[i]
+    if (infowindow.getMap()) {
+        infowindow.close();
+    } else {
+        infowindow.open(map, marker);
+map.setCenter(infowindow.position)
+    }
+}
+```
+해당하는 맛집의 마커와 정보창을 띄운다
