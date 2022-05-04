@@ -281,7 +281,7 @@ def update_like():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 ```
-JWT 토큰을 통해 로그인된 사용자의 정보를 불러오고, 
+JWT 토큰을 통해 로그인된 사용자의 정보를 불러오고, 사용자의 해당 포스트의 좋아요 여부를 체크하고, 해당 포스트의 좋아요 개수를 클라이언트에게 반환한다.
 
 <br>
 
