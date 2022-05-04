@@ -168,3 +168,109 @@ function toggle_sign_up() {
 그래서 .toggleClass()를 이용한다.
 
 is-hidden을 가지고 있으면 없애고, 없으면 생성하라는 내용의 함수
+
+
+css파일 분리하기
+
+동일한 css를 사용하는 부분에서는 코드의 중복을 방지하고자 하나의 css파일을 다른 html에서 불러오는 구조로 분리한다.
+
+공통으로 사용할 부분을 파일로 분리한다
+
+```css
+body {
+    background-color: RGBA(232, 52, 78, 0.2);
+    min-height: 100vh;
+      padding-top: 3.25rem;
+}
+
+.section {
+    padding: 1rem 1.5rem;
+    max-width: 750px;
+    margin: auto;
+}
+
+.is-sparta {
+    color: #e8344e!important;
+}
+
+.button.is-sparta {
+    background-color: #e8344e;
+    border-color: transparent;
+    color: #fff!important;
+}
+
+.button.is-sparta.is-outlined {
+    background-color: transparent;
+    border-color: #e8344e;
+    color: #e8344e!important;
+}
+
+.modal-content {
+    width: 600px;
+    max-width: 80%;
+}
+
+input::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+.image img {
+    object-fit:cover;
+    width:100%;
+    height:100%;
+}
+```
+
+<br>
+
+### 모달
+
+평소엔 안보이다가 특정 입력이나 동작을 했을 때, 페이지 위로 등장하는 작은 입력 창아더,
+
+bulma에서는 is-active란 클래스가 있으면 등장, 없으면 등장하지 않는 방식
+
+```jsx
+<p class="control">
+      <input id="input-post" class="input is-rounded" placeholder="무슨 생각을 하고 계신가요?"
+             onclick='$("#modal-post").addClass("is-active")'> </p>
+```
+
+모달은 modal-background, modal-content, modal-close로 구성되어 있다
+
+
+```html
+<div class="modal" id="modal-post">
+    <div class="modal-background" onclick='$("#modal-post").removeClass("is-active")'></div>
+    <div class="modal-content">
+        <div class="box">
+            <article class="media">
+                <div class="media-content">
+                    <div class="field">
+                        <p class="control">
+                            <textarea id="textarea-post" class="textarea"
+                                      placeholder="무슨 생각을 하고 계신가요?"></textarea>
+                        </p>
+                    </div>
+                    <nav class="level is-mobile">
+                        <div class="level-left">
+
+                        </div>
+                        <div class="level-right">
+                            <div class="level-item">
+                                <a class="button is-sparta" onclick="post()">포스팅하기</a>
+                            </div>
+                            <div class="level-item">
+                                <a class="button is-sparta is-outlined"
+                                   onclick='$("#modal-post").removeClass("is-active")'>취소</a>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </article>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"
+            onclick='$("#modal-post").removeClass("is-active")'></button>
+</div>
+```
+모달창 밖을 클릭하거나, 취소버튼을 누르면 모달을 끄도록 설정
