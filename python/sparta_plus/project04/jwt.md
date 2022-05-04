@@ -111,3 +111,248 @@ def home():
 ```
 클라이언트에서 보내는 쿠키를 확인하고, 토큰이 있으면 받아온 후, 디코딩한다.  
 DB에서 해당하는 값을 찾아 닉네임을 index.html과 함께 보내준다.
+
+<br>
+
+## JWT를 이용해 로그인 된 사용자정보 이용하기
+
+로그인 된 사용자가 게시글 저장하기
+```python
+@app.route('/posting', methods=['POST'])
+def posting():
+    # 쿠키에 있는 JWT 토큰 값을 가져옮
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+        # 포스팅하기
+        user_info = db.users.find_one({"username": payload["id"]})
+        comment_receive = request.form["comment_give"]
+        date_receive = request.form["date_give"]
+        doc = {
+            "username": user_info["username"],
+            "profile_name": user_info["profile_name"],
+            "profile_pic_real": user_info["profile_pic_real"],
+            "comment": comment_receive,
+            "date": date_receive
+        }
+        db.posts.insert_one(doc)
+
+        return jsonify({"result": "success", 'msg': '포스팅 성공'})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+```
+쿠키에 있는 JWT 토큰 값을 가져와 로그인된 사용자임을 확인하고, 사용자의 정보를 포스팅 내용과 함께 DB에 저장
+어떤 사용자가 포스팅을 했는지 알 수 있다.
+
+<br>
+
+```jsx
+// 게시글 저장
+function post() {
+    let comment = $("#textarea-post").val()  // 모달에 작성된 내용
+    let today = newDate().toISOString() // 작성 날짜 기록
+    $.ajax({
+        type: "POST",
+        url: "/posting",
+        data: {
+            comment_give: comment,
+            date_give: today
+        },
+        success: function (response) {
+            $("#modal-post").removeClass("is-active") // 모달 닫음
+            window.location.reload()
+        }
+    })
+}
+```
+클라이언트는 모달(포스팅 입력 박스)의 내용과 작성 날짜를 서버에 보내주는데, 자동으로 쿠키가 같이 전달된다.
+
+<br>
+
+로그인된 사용자의 게시글 목록 불러오기
+
+```python
+@app.route("/get_posts", methods=['GET'])
+def get_posts():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+        # 포스팅 목록 받아오기
+        posts = list(db.posts.find({}).sort("date", -1).limit(20)) # 'date' 역순으로 20개 가져옮
+        for post in posts:
+            post["_id"] = str(post["_id"]) # _id값을 ObjectID -> String 형변환
+
+        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", 'posts':posts})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+```
+각 포스트를 구분할 수 있게 하기위해 _id값을 문자열로 형변환
+
+<br>
+
+```jsx
+// 게시글 목록 가져오기
+function get_posts() {
+    $("#post-box").empty()
+    $.ajax({
+        type: "GET",
+        url: "/get_posts",
+        data: {},
+        success: function (response) {
+            if (response["result"] == "success") {
+                let posts = response["posts"]
+                for (let i = 0; i < posts.length; i++) {
+                    let post = posts[i]
+                    let time_post = newDate(post["date"])
+                    let time_before = time2str(time_post)  // 언제 포스팅했는지 시간계산
+                    let html_temp = `<div class="box" id="${post["_id"]}">
+                                        <article class="media">
+                                            <div class="media-left">
+                                                <a class="image is-64x64" href="/user/${post['username']}">
+                                                    <img class="is-rounded" src="/static/${post['profile_pic_real']}"
+                                                        alt="Image">
+                                                </a>
+                                            </div>
+                                            <div class="media-content">
+                                                <div class="content">
+                                                    <p>
+                                                        <strong>${post['profile_name']}</strong> <small>@${post['username']}</small> <small>${time_before}</small>
+                                                        <br>
+                                                        ${post['comment']}
+                                                    </p>
+                                                </div>
+                                                <nav class="level is-mobile">
+                                                    <div class="level-left">
+                                                        <a class="level-item is-sparta" aria-label="heart" onclick="toggle_like('${post['_id']}', 'heart')">
+                                                            <span class="icon is-small"><i class="fa fa-heart"
+                                                                                        aria-hidden="true"></i></span>&nbsp;<span class="like-num">2.7k</span>
+                                                        </a>
+                                                    </div>
+
+                                                </nav>
+                                            </div>
+                                        </article>
+                                    </div>`
+                                $("#post-box").append(html_temp)
+                }
+            }
+        }
+    })
+}
+```
+
+html을 만들어 붙여줄 때, id값을 구분해서 붙여준다.  
+각 포스트를 구별하기 위함
+
+<br>
+
+sns기능 (좋아요) 기능 구현하기
+
+``` python
+# 좋아요 추가
+@app.route('/update_like', methods=['POST'])
+def update_like():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+        # 좋아요 수 변경
+        user_info = db.users.find_one({"username": payload["id"]}) # 로그인 된 사용자 정보
+        post_id_receive = request.form["post_id_give"] # 어떤 포스트인지
+        type_receive = request.form["type_give"]
+        action_receive = request.form["action_give"]
+        doc = {
+            "post_id": post_id_receive,
+            "username": user_info["username"],
+            "type": type_receive
+        }
+        # 좋아요인지 아닌지 체크
+        if action_receive == "like":
+            db.likes.insert_one(doc)
+        else:
+            db.likes.delete_one(doc)
+        # 해당 포스트에 해당 타입의 반응이 몇 개인지
+        count = db.likes.count_documents({"post_id": post_id_receive, "type": type_receive})
+        return jsonify({"result": "success", 'msg': 'updated', "count": count})
+
+        return jsonify({"result": "success", 'msg': 'updated'})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+```
+JWT 토큰을 통해 로그인된 사용자의 정보를 불러오고, 
+
+<br>
+
+``` jsx
+// 좋아요 업데이트
+function toggle_like(post_id, type) {
+    console.log(post_id, type)
+    let $a_like = $(`#${post_id} a[aria-label='heart']`)
+    let $i_like = $a_like.find("i")
+    // 하트가 클릭되어 있는 상태
+    if ($i_like.hasClass("fa-heart")) {
+        $.ajax({
+            type: "POST",
+            url: "/update_like",
+            data: {
+                post_id_give: post_id,
+                type_give: type,
+                action_give: "unlike"
+            },
+            success: function (response) {
+                console.log("unlike")
+                // 꽉 찬 하트를 빼고, 빈 하트를 추가
+                $i_like.addClass("fa-heart-o").removeClass("fa-heart")
+                $a_like.find("span.like-num").text(response["count"])
+            }
+        })
+    // 하트가 클릭되어 있지 않은 상태
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "/update_like",
+            data: {
+                post_id_give: post_id,
+                type_give: type,
+                action_give: "like"
+            },
+            success: function (response) {
+                console.log("like")
+                // 빈 하트를 빼고, 꽉 찬 하트를 추가
+                $i_like.addClass("fa-heart").removeClass("fa-heart-o")
+                $a_like.find("span.like-num").text(num2str(response["count"]))  // 좋아요 수 출력 형식 변경
+            }
+        })
+
+    }
+}
+```
+좋아요를 클릭한건지, 좋아요를 취소한건지 구별하는 방법으로, 아이콘의 클래스가 fa-heart인지 fa-heart-o인지로 구별했다.
+
+<br>
+
+포스트의 좋아요 개수와 로그인된 사용자가 좋아요를 클릭했는지 여부를 클라이언트에 전달
+``` python
+#포스팅 목록 받아오기
+posts = list(db.posts.find({}).sort("date", -1).limit(20)) # 'date' 역순으로 20개 가져옮
+for post in posts:
+    post["_id"] = str(post["_id"]) # _id값을 ObjectID -> String 형변환
+    post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})  # 해당 포스트의 heart가 몇개인지
+    post["heart_by_me"] = bool(db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload['id']})) # 해당 포스트에 사용자가 heart표시 했는지 체크
+
+return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", 'posts':posts})
+```
+저장된 포스트를 불러올 때, 각 포스트들의 좋아요 개수와, 로그인한 사용자가 좋아요를 체크했는지 확인하는 기능을 추가했다.
+
+<br>
+
+포스팅을 불러오는 함수에 추가
+``` jsx
+// 사용자가 좋아요를 눌렀는지 안눌렀는지 상태를 동적으로 보여줌
+let class_heart = post['heart_by_me'] ? "fa-heart" : "fa-heart-o"
+// 좋아요 개수
+let count_heart = post['count_heart']
+```
+서버에서 받아온 값을 이용해 사용자가 좋아요를 누른 상태인지 체크, 좋아요 개수를 포스팅 html에 추가해준다.
