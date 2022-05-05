@@ -10,6 +10,14 @@ JSON을 통한 정보 전달 방식, 정보를 Token이라 한다.
 
 <br>
 
+파이썬에서 JWT를 사용하기 위해선 PyJWT라이브러리를 설치해야 한다.
+
+```
+Settings - python interpreter - PyJWT 설치
+```
+
+<BR>
+
 서버
 ```python
 @app.route('/api/login', methods=['POST'])
