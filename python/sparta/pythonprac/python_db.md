@@ -43,7 +43,7 @@ db.users.insert_one(doc)
 **Find**
 ``` python
 # 여러개 찾기 - 예시 ( _id 값은 제외하고 출력)
-# find({조건},{id값 가져오기x}) 
+# find({조건},{id값 가져오기x})
 same_ages = list(db.users.find({'age':20},{'_id':False})) # False를 붙이면 가져오지 않음
 
 # 한 개 찾기 - 예시
@@ -73,8 +73,8 @@ db.users.delete_many({})
 
 <br>
 
-## 데이터 찾아가기? 
-****  
+## 데이터 찾아가기?
+****
 정확한 단어를 잘 모르겠..
 
 
@@ -93,3 +93,11 @@ DB에 저장된 데이터 수를 가져오기
 ``` python
 post_count = db.weeklytest1.estimated_document_count({})
 ```
+
+<br>
+
+특정 수를 증가/감소시키기
+``` python
+db.weeklytest2.update_one({'idx': int(idx)}, {'$inc': {'read_count':1}})
+```
+weeklytest2컬렉션에서 idx인 도큐먼트의 read_count컬럼을 1증가 시키기
