@@ -76,9 +76,15 @@ $.ajax({
 def test_post():
   # 서버에 sample_give로 넘어온 값을 sample_receive에 저장
   sample_receive = request.form['sample_give']
+  
+  # 클라이언트에서 리스트로 넘어오는 값을 받기 
+  sample_list = request.form.getlist('sample_list[]')
 	 
   # DB에 저장하기 위해 딕셔너리로 만들기
-  doc = {'sample':sample_receive}	 
+  doc = {
+    'sample':sample_receive,  
+    'sample_list':sample_list  # Array형으로 저장된다
+  }	 
 
   # 만든 딕셔너리르 DB에 저장하기
   db.sample.insert_one(doc)  
@@ -100,6 +106,9 @@ $.ajax({
   })
 ```
 <br>
+
+
+
 
 번외) 프로젝트 구현 시, 이런 방향으로 구현하면 좋다
 
