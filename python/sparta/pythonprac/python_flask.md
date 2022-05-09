@@ -99,7 +99,10 @@ def test_post():
 $.ajax({
     type: "POST",
     url: "/test",
-    data: { sample_give:'샘플' },  // /test로 sample_give=샘플 요청
+    data: { 
+      sample_give:'샘플',
+      sample_list: [리스트]
+    },  
     success: function(response){
        console.log(response)
     }
