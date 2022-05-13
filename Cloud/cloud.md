@@ -33,6 +33,7 @@
 <br>
 
 ![Untitled (5)](https://user-images.githubusercontent.com/59812251/168272721-abeb9d22-096a-4ae0-8c8c-49fd1438704b.png)
+
 클라우드 서비스 종류
 
 - 서비스 관리 주체와 수준에 따라 클라우드 서비스를 구분할 수 있다.
