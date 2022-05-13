@@ -5,11 +5,12 @@ Microsoft에서 제공하는 클라우드 서비스이다.
 
 ![Untitled (2)](https://user-images.githubusercontent.com/59812251/168274055-91d1e3d6-d428-4d16-af5d-beb776a45772.png)
 
-Azure
-- 응용 프로그램을 빌드하고, 배포하고 관리할 수 있는 유연한 개방형 클라우드 플랫폼
-- AWS보다 데이터센터 수는 적지만 많이 사용된다.
-- On-premiss방식
-    - 자체적으로 보유한 전산실 서버에 직접 설치해 운영하는 방식 ↔ Off-premise: 클라우드 원격 환경에서 운영하는 방식
+
+응용 프로그램을 빌드하고, 배포하고 관리할 수 있는 유연한 개방형 클라우드 플랫폼이며, AWS보다 데이터센터 수는 적지만 많이 사용된다.
+
+On-premiss방식으로 운영된다.  
+- 자체적으로 보유한 전산실 서버에 직접 설치해 운영하는 방식
+- Off-premise : 클라우드 원격 환경에서 운영하는 방식
 
 <br>
 
@@ -19,7 +20,7 @@ Azure
 
 ![Untitled (4)](https://user-images.githubusercontent.com/59812251/168274071-24f1e6f6-3c4a-4faf-b13b-9da237438484.png)
 
-Azure 는 Windows Server 및 SQL Server용 AWS보다 약 5배 더 저렴하다.
+Azure은 Windows Server 및 SQL Server용 AWS보다 약 5배 더 저렴하다는 장점도 있다.
 
 <br>
 
