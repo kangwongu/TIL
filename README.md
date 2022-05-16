@@ -34,10 +34,14 @@
 - [Flask로 서버만들기](https://github.com/kangwongu/TIL/blob/master/python/sparta/pythonprac/python_flask.md)
 - [Jinja2 사용하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project02/Jinja2.md)
 
-## AWS
-- [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
-- [프론트/백 분리, 배포자동화](https://github.com/kangwongu/TIL/blob/master/AWS/aws_dividing.md)
-- [데이터베이스, 로그관리/분석](https://github.com/kangwongu/TIL/blob/master/AWS/aws_database.md)
+## Cloud
+- [Cloud 개념](https://github.com/kangwongu/TIL/blob/master/Cloud/cloud.md)
+- AWS
+  - [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
+  - [프론트/백 분리, 배포자동화](https://github.com/kangwongu/TIL/blob/master/AWS/aws_dividing.md)
+  - [데이터베이스, 로그관리/분석](https://github.com/kangwongu/TIL/blob/master/AWS/aws_database.md)
+- Azure
+  - [Azure](https://github.com/kangwongu/TIL/blob/master/Cloud/Azure/azure.md)
 
 ## Java
 - [Java 기초문법 정리](https://github.com/kangwongu/TIL/blob/master/Java/java_basic.md)
