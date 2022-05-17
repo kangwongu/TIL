@@ -4,3 +4,6 @@
     - [2장 변수](https://github.com/kangwongu/TIL/blob/master/Java/CH02.md)
     - [3장 연산자](https://github.com/kangwongu/TIL/blob/master/Java/CH03.md)
     - [4장 조건문과 반복문](https://github.com/kangwongu/TIL/blob/master/Java/CH04.md)
+    - [6장 클래스](https://github.com/kangwongu/TIL/blob/master/Java/CH06.md)
+    - [7장 상속](https://github.com/kangwongu/TIL/blob/master/Java/CH07.md)
+    - [8장 인터페이스](https://github.com/kangwongu/TIL/blob/master/Java/CH08.md)
