@@ -16,10 +16,21 @@
 - JS
   - [정규표현식 활용](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project04/regular_expressions.md)
 
-
 ## Git
 - [Git과 기본명령어](https://github.com/kangwongu/TIL/blob/master/Git/git.md)
 - [협업 시나리오](https://github.com/kangwongu/TIL/blob/master/Git/git%20for%20team.md)
+
+## Cloud
+- [Cloud 개념](https://github.com/kangwongu/TIL/blob/master/Cloud/cloud.md)
+- AWS
+  - [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
+  - [프론트/백 분리, 배포자동화](https://github.com/kangwongu/TIL/blob/master/AWS/aws_dividing.md)
+  - [데이터베이스, 로그관리/분석](https://github.com/kangwongu/TIL/blob/master/AWS/aws_database.md)
+- Azure
+  - [Azure](https://github.com/kangwongu/TIL/blob/master/Cloud/Azure/azure.md)
+
+# Database
+- [SQL](https://github.com/kangwongu/TIL/blob/master/Database/sql.md)
 
 ## 웹 기초
 - [웹 동작원리 이해(클라이언트-서버 통신)](https://github.com/kangwongu/TIL/blob/master/HTML_CSS_JS/sparta/web_basic.md)
@@ -34,14 +45,10 @@
 - [Flask로 서버만들기](https://github.com/kangwongu/TIL/blob/master/python/sparta/pythonprac/python_flask.md)
 - [Jinja2 사용하기](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project02/Jinja2.md)
 
-## Cloud
-- [Cloud 개념](https://github.com/kangwongu/TIL/blob/master/Cloud/cloud.md)
-- AWS
-  - [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
-  - [프론트/백 분리, 배포자동화](https://github.com/kangwongu/TIL/blob/master/AWS/aws_dividing.md)
-  - [데이터베이스, 로그관리/분석](https://github.com/kangwongu/TIL/blob/master/AWS/aws_database.md)
-- Azure
-  - [Azure](https://github.com/kangwongu/TIL/blob/master/Cloud/Azure/azure.md)
-
 ## Java
 - [Java 기초문법 정리](https://github.com/kangwongu/TIL/blob/master/Java/java_basic.md)
+
+## Spring
+- [스프링 기초](https://github.com/kangwongu/TIL/blob/master/Spring/sparta/Spring_basic/spring_basic.md)
+
+
