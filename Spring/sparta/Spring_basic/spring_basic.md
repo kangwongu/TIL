@@ -26,6 +26,7 @@ public class PersonController {
 ```
 
 브라우저에 '/myinfo'으로 접근하면 JSON형식의 클래스 정보를 확인할 수 있다.
+
 ![RestController](https://user-images.githubusercontent.com/59812251/169764459-8374b1c5-93e9-4066-b609-9310c91dd407.png)
 
 메소드를 잘 만들고 매핑을 잘해주면, 클라이언트로부터 요청이 왔을 때,
