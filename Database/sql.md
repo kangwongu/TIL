@@ -165,3 +165,159 @@ select payment_method, count(*) as cnt from orders o
 where o.course_title = '앱개발 종합반'
 group by payment_method
 ```
+
+<br>
+
+### 여러 테이블을 연결하는 Join
+
+두 테이블의 공통된 정보(key값)를 기준으로 테이블을 연결해서 한 테이블처럼 보는 것을 의미한다.
+
+#### Left Join
+
+어디에다가 무엇을 붙일건지, 순서가 중요하다
+
+![Left join](https://user-images.githubusercontent.com/59812251/169930291-2360d4eb-3062-45ad-ae61-cb5d8b4dc159.png)
+
+``` sql
+select * from users u
+left join point_users p
+on u.user_id = p.user_id
+```
+
+어떤 데이터는 모든 필드가 채워져있지만, 어떤 데이터는 비어있는 필드가 있을 수 있는데, 그 이유는 해당 데이터의 user_id 필드값이 point_users 테이블에 존재하지 않기 때문이다.
+
+**사용 예시**
+
+가입은 했지만 강의 수강을 시작하지 않은 유저들을 성씨별로 세어보기
+``` sql
+select u.name, count(*) from users u
+left join point_users pu on u.user_id = pu.user_id
+where pu.point_user_id is NULL
+group by u.name
+```
+
+<br>
+
+#### Inner Join
+
+![Inner join](https://user-images.githubusercontent.com/59812251/169930283-f6982ab5-f818-40cb-9cb7-995e14c03095.png)
+
+``` sql
+select * from users u
+inner join point_users p
+on u.user_id = p.user_id
+```
+
+Left Join과는 다르게, 여기서는 비어있는 필드가 있는 데이터가 없다.  
+그 이유는, 같은 user_id를 두 테이블에서 모두 가지고 있는 데이터만 출력했기 때문이다.
+
+**사용 예시**
+
+결제하고 시작하지 않은 유저들을 성씨별로 세어보기
+``` sql
+select name, count(*) cnt_name from enrolleds e
+inner join users u on e.user_id = u.user_id
+where is_registered = 0
+group by name
+order by cnt_name desc
+```
+
+<br>
+
+### 결과물 합치는 Union
+
+각 강의의 주차별 체크인 수를 세어보는데, 7월과 8월에 강의를 구매한 고객들의 한해서 검색하기
+
+``` sql
+(
+	select '7월' as month, c1.title, c2.week, count(*) as cnt from courses c1
+	inner join checkins c2 on c1.course_id = c2.course_id
+	inner join orders o on c2.user_id = o.user_id
+	where o.created_at < '2020-08-01'
+	group by c1.title, c2.week
+)
+union all
+(
+	select '8월' as month, c1.title, c2.week, count(*) as cnt from courses c1
+	inner join checkins c2 on c1.course_id = c2.course_id
+	inner join orders o on c2.user_id = o.user_id
+	where o.created_at >= '2020-08-01'
+	group by c1.title, c2.week
+)
+
+```
+
+<br>
+
+### Subquery
+쿼리 안의 쿼리라는 의미이다.
+하위 쿼리의 결과를 상위 쿼리에서 사용하면, SQL 쿼리가 간단해진다는 이점이 있다.
+
+#### 간단한 비교
+아래 두 쿼리는 같은 내용이지만, 보다시피 다른 방법으로 구현이 가능하다.
+
+**Join 활용**
+
+``` sql
+select u.user_id, u.name, u.email from users u
+inner join orders o on u.user_id = o.user_id
+where o.payment_method = 'kakaopay'
+```
+
+**서브쿼리 활용**
+``` sql
+select user_id, name, email from users u
+where user_id in (
+	select user_id from orders
+	where payment_method = 'kakaopay'
+)
+```
+
+<br>
+
+#### Where에 들어가는 서브쿼리
+
+서브쿼리의 결과를 조건에 활용하는 방식으로 사용한다.
+```
+where 필드명 in (서브쿼리)
+```
+
+``` sql
+select user_id, name, email from users u
+where user_id in (
+	select user_id from orders
+	where payment_method = 'kakaopay'
+)
+```
+
+#### Select에 들어가는 서브쿼리
+
+기존 테이블에 함께 보고싶은 통계 데이터를 붙이는 방식으로 사용한다.
+
+```
+select 필드명, 필드명, (서브쿼리) from ..
+```
+
+``` sql
+select c.checkin_id,
+       c.user_id,
+       c.likes,
+       (
+       	select avg(likes) from checkins
+		where user_id = c.user_id
+	   ) as avg_likes_user
+  from checkins c
+```
+
+#### From에 들어가는 서브쿼리
+
+내가 만든 select와 이미 있는 테이블을 Join하고 싶을 때 사용한다.
+
+``` sql
+select pu.user_id, pu.point, a.avg_likes from point_users pu
+inner join (
+	select user_id, round(avg(likes), 2) as avg_likes from checkins
+	group by user_id
+) a on pu.user_id = a.user_id
+
+```
