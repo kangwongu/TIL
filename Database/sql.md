@@ -321,3 +321,176 @@ inner join (
 ) a on pu.user_id = a.user_id
 
 ```
+
+### with절로 더 깔끔하게 쿼리문 정리
+
+```sql
+select c.title,
+       a.cnt_checkins,
+       b.cnt_total,
+       (a.cnt_checkins/b.cnt_total) as ratio
+from
+(
+	select course_id, count(distinct(user_id)) as cnt_checkins from checkins
+	group by course_id
+) a
+inner join
+(
+	select course_id, count(*) as cnt_total from orders
+	group by course_id 
+) b on a.course_id = b.course_id
+inner join courses c on a.course_id = c.course_id
+```
+from절 안에 들어가는 서브쿼리문이 복잡하고 헷갈려서 아래와 같이 with절을 사용할 수 있다.
+
+``` sql
+with table1 as (
+	select course_id, count(distinct(user_id)) as cnt_checkins from checkins
+	group by course_id
+), table2 as (
+	select course_id, count(*) as cnt_total from orders
+	group by course_id
+)
+
+select c.title,
+       a.cnt_checkins,
+       b.cnt_total,
+       (a.cnt_checkins/b.cnt_total) as ratio
+from table1 a inner join table2 b on a.course_id = b.course_id
+inner join courses c on a.course_id = c.course_id
+```
+
+<br>
+
+### 문자열 쪼개기 SUBSTRING_INDEX
+'@'기준으로 문자열 쪼개기
+``` sql
+select user_id, email, SUBSTRING_INDEX(email, '@', 1)  from users
+```
+쪼갠 후, 첫번째 조각 가져오기
+
+
+``` sql
+select user_id, email, SUBSTRING_INDEX(email, '@', -1)  from users
+```
+쪼갠 후, 마지막 조각 가져오기
+
+### 문자열 일부만 출력하기 SUBSTRING
+년,월,일,시간 데이터에서 년,월,일만 추출해 출력하기
+``` sql
+select order_no, created_at, substring(created_at,1,10) as date from orders
+```
+
+<br>
+
+### Case
+
+``` sql
+select pu.user_id, pu.point,
+       (case when pu.point > 10000 then '잘 하고 있어요!'
+       else '조금만 더 화이팅' end) as msg
+  from point_users pu
+```
+point 점수에 따라, 다르게 표시해 줄 수 있다.
+
+<br>
+
+``` sql
+select pu.user_id, pu.point,
+       (case when pu.point > 10000 then '1만 이상!'
+             when pu.point > 5000 then '5천 이상'
+       		 else '조금만 더 화이팅' end) as lv
+  from point_users pu
+```
+
+<br>
+
+``` sql
+select a.lv, count(*) from (
+	select pu.user_id, pu.point,
+	       (case when pu.point > 10000 then '1만 이상!'
+	             when pu.point > 5000 then '5천 이상'
+	       		 else '조금만 더 화이팅' end) as lv
+	  from point_users pu
+) a
+group by a.lv
+```
+From절의 Subquery로 통계내는 것도 가능하다.
+
+<br>
+
+``` sql
+with table1 as (
+	select pu.user_id, pu.point,
+		       (case when pu.point > 10000 then '1만 이상!'
+		             when pu.point > 5000 then '5천 이상'
+		       		 else '조금만 더 화이팅' end) as lv
+		  from point_users pu
+)
+
+select a.lv, count(*) from table1 a
+group by a.lv
+```
+with절과 함께 사용할 수도 있다.
+
+<br>
+
+### 문법 복습
+
+1. 평균 이상 포인트를 가지고 있으면 '잘 하고 있어요' / 낮으면 '열심히 합시다!' 표시해보기
+``` sql
+select pu.user_id, pu.point,
+       (case when pu.point > (select avg(point) from point_users) then '잘 하고 있어요'
+        else '열심히 합시다.' end) as msg
+  from point_users pu 
+```
+case문 안에 서브쿼리로 평균을 계산해서 비교한다.
+
+<br>
+
+2. 수강등록정보(enrolled_id)별 전체 강의 수와 들은 강의의 수 출력해보기
+``` sql
+select a.enrolled_id, b.done_cnt, a.total_cnt,
+	   round((b.done_cnt/a.total_cnt),2) as ratio
+from (
+	select enrolled_id, count(*) as total_cnt from enrolleds_detail
+	group by enrolled_id 
+) a 
+inner join (
+	select enrolled_id, count(*) as done_cnt from enrolleds_detail
+	where done = 1
+	group by enrolled_id 
+) b
+on a.enrolled_id = b.enrolled_id
+```
+From절에 서브쿼리로 두 개를 만들어 놓고, join한다.
+
+<br>
+
+with절을 활용할 수 있다.
+``` sql
+with table1 as (
+	select enrolled_id, count(*) as total_cnt from enrolleds_detail
+	group by enrolled_id 
+), table2 as (
+	select enrolled_id, count(*) as done_cnt from enrolleds_detail
+	where done = 1
+	group by enrolled_id 
+)
+
+select a.enrolled_id, b.done_cnt, a.total_cnt,
+	   round((b.done_cnt/a.total_cnt),2) as ratio
+  from table1 a 
+  inner join table2 b on a.enrolled_id = b.enrolled_id
+```
+
+<br>
+
+이렇게도 풀 수 있다.
+``` sql
+select enrolled_id,
+       sum(done) as cnt_done,
+       count(*) as cnt_total
+from enrolleds_detail ed
+group by enrolled_id
+```
