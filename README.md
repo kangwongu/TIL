@@ -36,6 +36,8 @@
 - [웹 동작원리 이해(클라이언트-서버 통신)](https://github.com/kangwongu/TIL/blob/master/HTML_CSS_JS/sparta/web_basic.md)
 - [Ajax](https://github.com/kangwongu/TIL/blob/master/HTML_CSS_JS/sparta/ajax.md)
 - [정적 웹페이지/동적 웹페이지](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project02/static_dynamic_webpage.md)
+- [CSR, SSR, SSG](https://github.com/kangwongu/TIL/blob/master/Web/csr_ssr_ssg.md)
+- [SPA, MPA](https://github.com/kangwongu/TIL/blob/master/Web/spa_mpa.md)
 
 ## CSS
 - [Bulma 프레임워크](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project04/bulma.md)
