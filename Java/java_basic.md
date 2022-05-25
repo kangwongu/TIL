@@ -8,6 +8,7 @@
     - [6장 클래스](https://github.com/kangwongu/TIL/blob/master/Java/CH06.md)
     - [7장 상속](https://github.com/kangwongu/TIL/blob/master/Java/CH07.md)
     - [8장 인터페이스](https://github.com/kangwongu/TIL/blob/master/Java/CH08.md)
+    - [9장 중첩 클래스와 중첩 인터페이스](https://github.com/kangwongu/TIL/blob/master/Java/CH09.md)
     - [10장 예외처리](https://github.com/kangwongu/TIL/blob/master/Java/CH10.md)
     - [11장 기본 API 클래스](https://github.com/kangwongu/TIL/blob/master/Java/CH11.md)
     - [13장 제네릭](https://github.com/kangwongu/TIL/blob/master/Java/CH13.md)
