@@ -320,3 +320,91 @@ update메소드는 Service에 구현되어 있으므로, Service의 update메소
         return id;
     }
 ```
+
+<br>
+
+### 클라이언트에서 서버에 요청할 때
+
+클라이언트에서 서버(스프링)로 데이터를 전송할 때는 JSON만을 보내야 한다.  
+하지만 API간 데이터를 주고 받는 건 문자열만 가능하기 때문에 서버로 데이터를 전송 시,  
+`JSON.stringify([서버로 전달할 데이터])`로 문자열로 변환해서 보내줘야 하고,  
+문자열로 보내지만, 이 데이터는 JSON이라는 것을 알려주기 위해 contentType을 `application/json`이라고 명시해준다.
+
+``` java
+// 서버로 전달할 데이터를 JSON으로 만든다.
+let data = {'username': username, 'contents': contents};
+
+$.ajax({
+    type: 'POST',
+    url: '/api/memos',
+    contentType: 'application/json', // JSON 형식으로 전달함을 알림
+    // API간 데이터를 주고 받는 건 문자열밖에 안 됨
+    data: JSON.stringify(data),  // json -> string
+    success: function (response) {
+        alert('저장이 완료되었습니다.')
+        window.location.reload();
+    }
+});
+```
+
+<br>
+
+### 네이버 쇼핑 API 이용해보기
+
+![20220526_170231](https://user-images.githubusercontent.com/59812251/170445423-55762847-241f-4022-b774-50d12e733203.png)
+
+네이버 쇼핑 API 이용을 신청한다.
+
+<br>
+
+![20220526_170248](https://user-images.githubusercontent.com/59812251/170445429-1f12f3d8-00bd-46af-8e23-219db68439ce.png)
+
+어플리케이션 이름과 환경을 WEB으로 설정하고, URL을 기입한다. (나는 로컬에서 사용할 것이기 때문에 locahost로 기입)
+
+신청을 완료하면 Client ID, Client SECRET을 발급받는다.  
+이 친구들은 API 요청할 때 쓸 것이다.
+
+<br>
+
+사용 방법은 https://developers.naver.com/docs/search/shopping/ 을 참고하면 된다.  
+위 링크를 바탕으로 네이버 쇼핑 API에 요청을 해보았다.
+
+![20220526_171154](https://user-images.githubusercontent.com/59812251/170447062-d9c74832-b496-4e1f-887f-3744a26245bc.png)
+
+Heder에 발급받은 Client ID, Client SECRET를 추가해주고, '아스날'상품을 검색해보았다.
+
+<br>
+
+![20220526_171217](https://user-images.githubusercontent.com/59812251/170447070-851b63b5-2dd7-480a-8ddb-b972bb8f9421.png)
+
+결과가 나오는 것을 확인할 수 있다.
+
+<br>
+
+``` java
+public class NaverShopSearch {
+    public String search() {
+        RestTemplate rest = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Naver-Client-Id", "[Client ID]");
+        headers.add("X-Naver-Client-Secret", "[Client SECRET]");
+        String body = "";
+
+        HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
+        ResponseEntity<String> responseEntity = rest.exchange("https://openapi.naver.com/v1/search/shop.json?query=아스날", HttpMethod.GET, requestEntity, String.class);
+        HttpStatus httpStatus = responseEntity.getStatusCode();
+        int status = httpStatus.value();
+        String response = responseEntity.getBody();
+        System.out.println("Response status: " + status);
+        System.out.println(response);
+
+        return response;
+    }
+
+    public static void main(String[] args) {
+        NaverShopSearch naverShopSearch = new NaverShopSearch();
+        naverShopSearch.search();
+    }
+}
+```
+java로 변환해서 네이버 쇼핑 API 이용할 수도 있다.
