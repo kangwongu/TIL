@@ -38,6 +38,7 @@
 - [정적 웹페이지/동적 웹페이지](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project02/static_dynamic_webpage.md)
 - [CSR, SSR, SSG](https://github.com/kangwongu/TIL/blob/master/Web/csr_ssr_ssg.md)
 - [SPA, MPA](https://github.com/kangwongu/TIL/blob/master/Web/spa_mpa.md)
+- [서버리스](https://github.com/kangwongu/TIL/blob/master/Web/serverless.md)
 
 ## CSS
 - [Bulma 프레임워크](https://github.com/kangwongu/TIL/blob/master/python/sparta_plus/project04/bulma.md)
