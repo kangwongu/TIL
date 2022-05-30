@@ -29,7 +29,7 @@
 - Azure
   - [Azure](https://github.com/kangwongu/TIL/blob/master/Cloud/Azure/azure.md)
 
-# Database
+## Database
 - [SQL](https://github.com/kangwongu/TIL/blob/master/Database/sql.md)
 
 ## 웹 기초
