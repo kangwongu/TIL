@@ -408,3 +408,95 @@ public class NaverShopSearch {
 }
 ```
 java로 변환해서 네이버 쇼핑 API 이용할 수도 있다.
+
+<br>
+
+### 네이버 쇼핑 API를 스프링에서 활용하기
+
+네이버 쇼핑 API를 자바 코드로 만들어서 사용해보았는데, 이를 스프링에서 활용할 수 있도록 해보자  
+검색결과를 클라이언트에게 반환해 줄 것이다.  
+
+필요한 2가지
+```
+1. 검색어는 사용자가 입력해야 함
+2. 검색 결과를 문자열로 받는 것이 아니라, DTO로 바꿔서 클라이언트에 전달하도록 변경해야하 함
+```
+
+검색 결과를 클라이언트에게 반환해주기 위해서 네이버 쇼핑 API클래스를 수정하고 DTO 클래스를 생성했다.
+
+<br>
+
+네이버 쇼핑 API 클래스
+``` java
+public class NaverShopSearch {
+    public String search(String query) {
+        ...
+    }
+
+    // 검색 결과를 JSON으로 변환 후 Dto로 만들어서 반환
+    public List<ItemDto> fromJSONtoItems(String result) {
+        JSONObject rjson = new JSONObject(result);
+        JSONArray items = rjson.getJSONArray("items");
+        List<ItemDto> itemDtoList = new ArrayList<>();
+        for (int i=0; i<items.length(); i++) {
+            JSONObject itemJson = items.getJSONObject(i);
+            ItemDto itemDto = new ItemDto(itemJson);
+            itemDtoList.add(itemDto);
+        }
+        return itemDtoList;
+    }
+}
+```
+검색 결과가 문자열로 반환되던 기존방식에서, JSON으로 변환하고 변환한 JSON을 바탕으로 ItemDto를 만들어 클라이언트에게 반환한다.
+
+<br>
+
+DTO클래스
+```java
+@Getter
+public class ItemDto {
+    private String title;
+    private String image;
+    private int lprice;
+    private String link;
+
+    public ItemDto(JSONObject itemJson) {
+        this.title = itemJson.getString("title");
+        this.image = itemJson.getString("imgae");
+        this.lprice = itemJson.getInt("lprice");
+        this.link = itemJson.getString("link");
+    }
+}
+```
+
+<br>
+
+#### 자바에서 JSON 다루기
+
+자바에서 JSON을 다루기 위해서는, org.json 패키지를 설치해야 한다.
+
+maven repository 접속 -> json 검색 -> JSON In Java 클릭 -> 대중적인 버전 클릭 -> Gradle 탭 클릭 -> build.gradle > dependencies에 붙여넣기
+
+``` java
+// String -> JSON
+JSONObject rjson = new JSONObject(result);
+```
+
+``` java
+// JSON에서 배열꺼내기 (JSON에 들어있는 'items'배열을 꺼낸다)
+JSONArray items = rjson.getJSONArray("items");
+```
+
+``` java
+// JSONArray에 저장되어 있는 데이터 꺼내기
+for (int i=0; i<items.length(); i++) {
+	JSONObject itemJson = items.get(i);
+	System.out.println(itemJson);
+}
+```
+
+``` java
+// 꺼내온 데이터(JSON)에서 String,int등등 데이터 뽑기
+String title = itemJson.getString("title");
+int lprice = itemJson.getInt("lprice");
+```
