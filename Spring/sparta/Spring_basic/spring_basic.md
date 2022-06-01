@@ -532,3 +532,83 @@ public void updatePrice() {
 ``` java
 @EnableScheduling // 스프링 부트에서 스케줄러가 작동하게 한다.
 ```
+
+<br>
+
+### 데이터베이스 연결하기
+인텔리제이 우측에서 Database를 클릭하면 창이 열린다
+
+'+'를 클릭 - Data Source - MySQL클릭
+
+DB연결 창이 띄워지는데, Host에 RDS의 엔드포인트를 입력하고 User/Password에 RDS 생성 시, 설정한 User/Password값을 입력하고 'OK'를 클릭하면 연결!
+
+<br>
+
+**스프링 부트와 연결하기**
+
+```
+spring.datasource.url=jdbc:mysql://나의엔드포인트:3306/myselectshop
+spring.datasource.username=나의USERNAME
+spring.datasource.password=나의패스워드
+spring.jpa.hibernate.ddl-auto=update
+```
+application.properties에 추가한다.
+
+<br>
+
+### 배포파일 빌드하기
+
+```
+인텔리제이 우측 탭 'Gradle' 클릭 - Tasks - build - 톱니바퀴모양 build를 더블 클릭
+```
+
+빌드가 끝나면 좌측 Project탭에 build폴더가 생긴다.  
+build - libs에 .jar 확장자로 끝나는 파일이 생겼을텐데 이것이 빌드된 파일
+
+<br>
+
+### EC2에 업로드하기
+
+빌드된 파일을 EC2에 올리면 EC2에서 프로젝트를 실행시킬 수 있다.  
+하지만 파일을 올리면 끝이 아니라, EC2에 JDK를 설치해주어야 정상적으로 동작한다.
+
+<br>
+
+EC2에 JDK설치하기
+```
+sudo apt-get update
+sudo apt-get install openjdk-8-jdk
+java -version
+```
+
+<br>
+
+스프링 부트 실행
+```
+java -jar JAR파일명.jar
+```
+
+<br>
+
+**포트포워딩**
+```
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+```
+
+<br>
+
+**nohup 설정하기**
+```
+nohup java -jar JAR파일명.jar &
+```
+
+<br>
+
+**서버 종료하기**
+```
+# 아래 명령어로 미리 pid 값(프로세스 번호)을 본다
+ps -ef | grep java
+
+# 아래 명령어로 특정 프로세스를 죽인다
+kill -9 [pid값]
+```
