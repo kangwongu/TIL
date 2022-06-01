@@ -500,3 +500,35 @@ for (int i=0; i<items.length(); i++) {
 String title = itemJson.getString("title");
 int lprice = itemJson.getInt("lprice");
 ```
+
+<br>
+
+### @Component
+스프링이 필요 시, 자동으로 생성하는 클래스 목록이다.  
+스프링이 자동으로, 필요한 클래스를 필요한 곳에 생성해 사용할 수 있도록 허락하는 것
+
+``` java
+@Component
+public class NaverShopSearch {
+    ...
+}
+```
+
+<br>
+
+### 스케쥴러
+지정된 시간에 특정 기능을 자동으로 동작하도록 하는 것
+
+``` java
+// 초, 분, 시, 일, 월, 주 순서
+@Scheduled(cron = "0 0 1 * * *")
+public void updatePrice() {
+    ...
+}
+```
+매주 매월 매일 새벽 1시에 자동으로 updatePrice()를 실행한다.
+
+정상적으로 실행되도록 하기 위해 main 어플리케이션에 스케쥴러가 작동하도록 어노테이션을 추가해야한다.
+``` java
+@EnableScheduling // 스프링 부트에서 스케줄러가 작동하게 한다.
+```
