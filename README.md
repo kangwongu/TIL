@@ -22,12 +22,11 @@
 
 ## Cloud
 - [Cloud 개념](https://github.com/kangwongu/TIL/blob/master/Cloud/cloud.md)
-- AWS
-  - [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
+- [AWS](https://github.com/kangwongu/TIL/blob/master/AWS/aws.md)
   - [프론트/백 분리, 배포자동화](https://github.com/kangwongu/TIL/blob/master/AWS/aws_dividing.md)
   - [데이터베이스, 로그관리/분석](https://github.com/kangwongu/TIL/blob/master/AWS/aws_database.md)
-- Azure
-  - [Azure](https://github.com/kangwongu/TIL/blob/master/Cloud/Azure/azure.md)
+  - [AWS SAM](https://github.com/kangwongu/TIL/blob/master/Cloud/AWS/aws_sam.md)
+- [Azure](https://github.com/kangwongu/TIL/blob/master/Cloud/Azure/azure.md)
 
 ## Database
 - [SQL](https://github.com/kangwongu/TIL/blob/master/Database/sql.md)
