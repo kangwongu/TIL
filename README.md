@@ -56,5 +56,6 @@
 - 스파르타코딩클럽
   - [스프링 기초](https://github.com/kangwongu/TIL/blob/master/Spring/sparta/Spring_basic/spring_basic.md)
 - 김영한님
-  - [스프링 입문](https://github.com/kangwongu/TIL/blob/master/Spring/spring.md)
+  - [스프링 입문](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(1).md)
+  - [스프링 핵심 원리 - 기본편](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(2).md)
 
