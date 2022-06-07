@@ -639,6 +639,23 @@ member3 = Optional.empty
 
 이를 개선하기위해 Lombok이 등장했다
 
+``` java
+// build.gradle
+configurations {
+    compileOnly {
+    extendsFrom annotationProcessor
+    }
+}
+
+compileOnly 'org.projectlombok:lombok'
+annotationProcessor 'org.projectlombok:lombok'
+testCompileOnly 'org.projectlombok:lombok'
+testAnnotationProcessor 'org.projectlombok:lombok'
+```
+
+plugin - lombok 설치  
+Annotation Processors -> Enable annotation processing 체크
+
 <br>
 
 ### @Autowired 필드 명, @Qualifier, @Primary
