@@ -390,3 +390,364 @@ public class StatefulService {
 @Bean이 붙은 메서드마다 이미 스프링 빈이 존재하면 존재하는 빈을 반환하고, 스프링 빈이 없으면
 생성해서 스프링 빈으로 등록하고 반환하는 코드가 동적으로 만들어진다
 ```
+
+<br>
+
+### 컴포넌트 스캔
+
+직접 스프링 빈으로 등록하는 것은 귀찮은 일이기에, 스프링은 설정 정보가 없어도 자동으로 스프링 빈을 등록하는 컴포넌트 스캔 기능을 제공한다.
+
+컴포넌트 스캔을 사용하려면 `@ComponentScan`을 설정 정보에 붙이면 된다.  
+이전과 다르게, 직접 @Bean으로 등록하지 않아도 된다.
+
+``` java
+@Configuration
+@ComponentScan
+public class AutoAppConfig {
+
+}
+```
+
+<br>
+
+컴포넌트 스캔은 `@Component`애노테이션이 붙은 클래스를 스캔해서 스프링 빈으로 등록한다.  
+ex) MemberServiceImpl -> memberServiceImpl
+``` java
+@Component
+public class MemberServiceImpl implements MemberService {
+
+    private final MemberRepository memberRepository;
+
+    // 스프링 컨테이너가 자동으로 해당 스프링 빈을 찾아 주입
+    @Autowired
+    public MemberServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+    ...
+}
+```
+이전엔 설정 클래스(AppConfig)에서 @Bean으로 직접 설정 정보를 작성했고, 의존관계도 직접 명시했지만, 이제는 설정 정보 자체가 없기 때문에 의존관계 주입을 클래스 내에서 해결해야 한다.  
+`@Autowired`를 사용해 의존관계를 자동으로 주입한다  
+
+<br>
+
+스캔할 위치를 지정할 수 있다.
+``` java
+@ComponentScan(
+ basePackages = "hello.core",
+)
+```
+하지만 권장하는 방법으로는 설정 정보 클래스의 위치를 프로젝트 최상단에 두는 것이다.  
+```
+com.hello
+com.hello.serivce
+com.hello.repository
+
+com.hello에 설정 정보 클래스를 두고 @ComponentScan을 붙이고, basePackages를 생략한다.
+
+이렇게 하면 com.hello를 포함한 하위는 모두 자동으로 컴포넌트 스캔의 대상이 된다.
+```
+
+<br>
+
+#### 컴포넌트 스캔 기본 대상
+```
+@Component : 컴포넌트 스캔에서 사용
+@Controlller : 스프링 MVC 컨트롤러에서 사용
+@Service : 스프링 비즈니스 로직에서 사용
+@Repository : 스프링 데이터 접근 계층에서 사용
+@Configuration : 스프링 설정 정보에서 사용
+```
+
+<br>
+
+#### 필터
+
+@ComponentScan에 필터 정보를 추가한다.
+```
+includeFilters : 컴포넌트 스캔 대상을 추가로 지정한다.
+excludeFilters : 컴포넌트 스캔에서 제외할 대상을 지정한다.
+```
+
+옵션
+```
+ANNOTATION: 기본값, 애노테이션을 인식해서 동작한다.
+ex) org.example.SomeAnnotation
+
+ASSIGNABLE_TYPE: 지정한 타입과 자식 타입을 인식해서 동작한다.
+ex) org.example.SomeClass
+
+ASPECTJ: AspectJ 패턴 사용
+ex) org.example..*Service+
+
+REGEX: 정규 표현식
+ex) org\.example\.Default.*
+
+CUSTOM: TypeFilter 이라는 인터페이스를 구현해서 처리
+ex) org.example.MyTypeFilter
+```
+
+개인적으로 옵션을 변경하면서 사용하기보다는 스프링의 기본 설정에 최대한 맞추어 사용하는 것이 권장된다.
+
+<br>
+
+#### 중복 등록과 충돌
+컴포넌트 스캔에 의해 자동으로 스프링 빈이 등록될 때 이름이 같다면 ConflictingBeanDefinitionException 예외가 발생한다.
+
+수동 빈 등록과 자동 빈 등록에서 빈 이름이 충돌되면 수동 빈 등록이 우선권을 가진다.  
+(최근 스프링 부트에선 수동 빈 등록과 자동 빈 등록이 충돌나면 오류가 발생하도록 기본값이 변경됨)
+
+<br>
+
+### 다양한 의존관계 주입 방법
+
+크게 4가지 방법이 존재
+```
+생성자 주입
+수정자 주입(setter 주입)
+필드 주입
+일반 메소드 주입
+```
+
+<br>
+
+#### 생성자 주입
+불변, 필수 의존관계에 주로 사용되고 대체로 생성자 주입을 통해 의존관계를 주입한다.
+
+``` java
+@Component
+public class OrderServiceImpl implements OrderService {
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+    // 생성자 주입
+    @Autowired
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy
+    discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+}
+```
+
+<br>
+
+#### 수정자 주입
+선택, 변경 가능성이 있는 의존관계에 사용한다.  
+많이 쓰이진 않는 방식이다.
+
+``` java
+@Component
+public class OrderServiceImpl implements OrderService {
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+    // 수정자 주입
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+    @Autowired
+    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
+        this.discountPolicy = discountPolicy;
+    }
+}
+```
+
+<br>
+
+#### 필드 주입
+필드에 바로 주입하는 방식이다.  
+이 방법은 더 이상 사용되지 않는다.  
+외부에서 변경이 불가능해서 테스트가 어렵다는 단점이 존재한다
+
+``` java
+@Component
+public class OrderServiceImpl implements OrderService {
+    // 필드 주입 방식
+    @Autowired
+    private MemberRepository memberRepository;
+    
+    @Autowired
+    private DiscountPolicy discountPolicy;
+}
+```
+
+<br>
+
+#### 일반 메소드 주입
+일반 메소드를 통해서 주입받을 수도 있다.  
+일반적으로 사용하지 않는다.
+
+``` java
+@Component
+public class OrderServiceImpl implements OrderService {
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+    // 일반 메소드 주입
+    @Autowired
+    public void init(MemberRepository memberRepository, DiscountPolicy
+    discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+}
+```
+
+<br>
+
+### 옵션 처리
+주입할 스프링 빈이 없다면?  
+
+자동 주입 대상을 옵션으로 처리하는 방법
+```
+@Autowired(required=false) : 자동 주입할 대상이 없으면 수정자 메서드 자체가 호출 안됨
+org.springframework.lang.@Nullable : 자동 주입할 대상이 없으면 null이 입력된다.
+Optional<> : 자동 주입할 대상이 없으면 Optional.empty 가 입력된다.
+```
+
+<br>
+
+예시)  
+Member클래스는 스프링 빈으로 등록되어 있지 않다고 가정
+``` java
+@Autowired(required = false)
+public void setNoBean1(Member member1) {
+    System.out.println("member1 = " + member1);
+}
+
+@Autowired
+public void setNoBean2(@Nullable Member member2) {
+    System.out.println("member2 = " + member2);
+}
+
+@Autowired
+public void setNoBean3(Optional<Member> member3) {
+    System.out.println("member3 = " + member3);
+}
+```
+```
+[출력]
+member2 = null
+member3 = Optional.empty
+```
+
+<br>
+
+### Lombok
+
+생성자 주입 방식은 좋지만 코드를 많이 작성해야 한다.  
+생성자, 주입 받은 값을 대입하는 코드 등등..
+
+이를 개선하기위해 Lombok이 등장했다
+
+<br>
+
+### @Autowired 필드 명, @Qualifier, @Primary
+
+@Autowired는 타입으로 조회를 한다.  
+타입으로 조회했을 때, 선택된 빈이 2개 이상이면 문제가 발생한다.
+
+``` java
+@Component
+public class FixDiscountPolicy implements DiscountPolicy {}
+
+@Component
+public class RateDiscountPolicy implements DiscountPolicy {}
+```
+DiscountPolicy의 하위 타입들을 스프링 빈으로 선언하고, @Autowired로 의존관계 자동 주입을 하면 오류(NoUniqueBeanDefinitionException)가 발생한다.
+
+#### 해결 방법
+```
+@Qualifier -> @Qualifier끼리 매칭 -> 빈 이름 매칭
+@Primary 사용
+```
+
+<br>
+
+**@Qualifier 사용**
+
+추가 구분자를 붙여주는 방법
+
+``` java
+@Component
+@Qualifier("mainDiscountPolicy")
+public class RateDiscountPolicy implements DiscountPolicy {}
+```
+
+주입할 때 등록한 이름을 붙인다.
+``` java
+@Autowired
+public OrderServiceImpl(MemberRepository memberRepository, @Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
+    this.memberRepository = memberRepository;
+    this.discountPolicy = discountPolicy;
+}
+```
+@Qualifier로 주입할 때, 등록한 이름을 못찾으면, 스프링 빈 이름에서 찾는다.  
+(@Qualifier는 @Qualifier를 찾는 용도로만 사용하는게 명확)
+
+<br>
+
+추가로, 위에서 @Qualifier를 사용할 때, 아래와 같이 사용했는데, 이렇게 문자열로 적으면 컴파일시 타입 체크가 안되는 문제가 발생한다.  
+애노테이션을 만들어서 이를 해결할 수 있다.
+``` java
+@Component
+@Qualifier("mainDiscountPolicy") DiscountPolicy
+```
+
+<br>
+
+애노테이션 사용
+``` java
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER,
+ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Qualifier("mainDiscountPolicy")
+public @interface MainDiscountPolicy {
+}
+
+@Component
+@MainDiscountPolicy
+public class RateDiscountPolicy implements DiscountPolicy {}
+```
+
+**@Primary 사용**
+
+우선순위를 정하는 방법이며, @Autowired시에 여러 빈이 매칭될 때 우선권을 갖는다.
+
+``` java
+@Component
+@Primary
+public class RateDiscountPolicy implements DiscountPolicy {}
+
+@Component
+public class FixDiscountPolicy implements DiscountPolicy {}
+```
+우선권을 RateDiscountPolicy가 갖는다.  
+선택된 빈이 2개여서 오류가 발생했었는데, 우선순위를 설정하면 오류가 발생하지 않는다.
+
+<br>
+
+### 조회한 빈이 모두 필요할 때
+
+해당 타입의 스프링 빈이 다 필요한 경우도 있을 수 있는데, 이때는 List, Map을 사용해 조회한 빈을 담는다.
+
+<br>
+
+### 자동/수동 운영 기준
+
+어플리케이션은 크게 업무 로직과 기술 지원 로직으로 나눌 수 있다.
+```
+업무 로직 빈
+- 웹을 지원하는 컨트롤러, 핵심 비즈니스 로직이 있는 서비스, 데이터 계층의 로직을 처리하는
+리포지토리등이 모두 업무 로직이다. 보통 비즈니스 요구사항을 개발할 때 추가되거나 변경된다
+
+기술 지원 빈
+- 기술적인 문제나 공통 관심사(AOP)를 처리할 때 주로 사용된다. 데이터베이스 연결이나,
+공통 로그 처리 처럼 업무 로직을 지원하기 위한 하부 기술이나 공통 기술들이다
+```
+
+기술 지원 로직들은 가급적 수동 빈 등록을 사용해서 명확하게 드러내는 것이 좋다
+
+
+다형성을 적극 활용하는 비즈니스 로직도 수동으로 등록하는 것이 좋은 방법일 수 있다.  
+자동으로 하면 특정 패키지에 같이 묶어두는 것이 좋다.
