@@ -768,3 +768,261 @@ public class FixDiscountPolicy implements DiscountPolicy {}
 
 다형성을 적극 활용하는 비즈니스 로직도 수동으로 등록하는 것이 좋은 방법일 수 있다.  
 자동으로 하면 특정 패키지에 같이 묶어두는 것이 좋다.
+
+<br>
+
+### 빈 생명주기 콜백
+애플리케이션 시작 시점에 필요한 연결을 미리 해두고,
+애플리케이션 종료 시점에 연결을 모두 종료하는 작업을 진행하려면, 객체 초기화와 종료 작업이 필요하다.
+
+스프링을 통해 이러한 초기화 작업과 종료 작업은 어떻게 할까?  
+(빈 생명주기 콜백)
+
+```
+객체 생성 -> 의존관계 주입
+```
+스프링 빈은 위와 같은 단계를 거친 후에야 필요한 데이터를 사용할 수 있는 준비가 완료된다.  
+스프링은 의존관계 주입이 완료되면 스프링 빈에게 콜백 메소드를 통해서 초기화 시점을 알려주는 기능들을 제공하며, 스프링 컨테이너가 종료되기 직전에 소멸 콜백을 준다.
+
+<br>
+
+스프링 빈의 이벤트 라이프 사이클
+```
+1. 스프링 컨테이너 생성
+2. 스프링 빈 생성
+3. 의존관계 주입
+4. 초기화 콜백
+5. 사용
+6. 소멸전 콜백
+7. 스프링 종료
+
+초기화 콜백: 빈이 생성되고, 빈의 의존관계 주입이 완료된 후 호출
+소멸전 콜백: 빈이 소멸되기 직전에 호출
+```
+
+<br>
+
+스프링은 다양한 방식으로 생명주기 콜백을 지원한다.
+```
+인터페이스(InitializingBean, DisposableBean)
+설정 정보에 초기화 메서드, 종료 메서드 지정
+@PostConstruct, @PreDestroy 애노테이션 지원
+```
+
+#### 인터페이스 InitializingBean, DisposableBean
+
+지금은 거의 사용하지 않는 방법이다.  
+인터페이스를 구현해 초기화와 소멸을 구현한다.
+
+``` java
+public class NetworkClient implements InitializingBean, DisposableBean {
+
+    ...
+    // 스프링이 의존관계 주입 끝나면 호출
+    // 초기화 콜백
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("NetworkClient.afterPropertiesSet");
+        connect();
+        call("초기화 연결 메시지");
+    }
+
+    // 소멸전 콜백
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("NetworkClient.destroy");
+        disconnect();
+    }
+}
+```
+
+<br>
+
+#### 빈 등록 초기화, 소멸 메서드 지정
+설정 정보에 초기화, 소멸 메소드를 지정하는 방법이다.  
+코드를 고칠 수 없는 외부 라이브러리를 초기화, 종료해야 할 때 사용한다.
+
+``` java
+public class NetworkClient {
+
+    ...
+    // 초기화 콜백
+    public void init() {
+        System.out.println("NetworkClient.afterPropertiesSet");
+        connect();
+        call("초기화 연결 메시지");
+    }
+
+    // 소멸전 콜백
+    public void close() {
+        System.out.println("NetworkClient.destroy");
+        disconnect();
+    }
+}
+```
+
+<br>
+
+빈을 등록할 때, 초기화, 소멸 메소드를 지정한다.
+``` java
+@Bean(initMethod = "init", destroyMethod = "close")
+public NetworkClient networkClient() {
+    NetworkClient networkClient = new NetworkClient();
+    networkClient.setUrl("http://hello-spring.dev");
+    return networkClient;
+}
+```
+
+<br>
+
+#### 애노테이션 @PostConstruct, @PreDestroy
+애노테이션을 사용해 초기화와 소멸 메소드를 지정한다.  
+이것을 메인으로 사용하고 외부 라이브러리를 초기화, 소멸할 때는 @Bean의 기능을 사용한다.
+
+``` java
+public class NetworkClient {
+
+    ...
+    // 스프링이 의존관계 주입 끝나면 호출
+    // 초기화 콜백
+    @PostConstruct
+    public void init() {
+        System.out.println("NetworkClient.afterPropertiesSet");
+        connect();
+        call("초기화 연결 메시지");
+    }
+
+    // 소멸전 콜백
+    @PreDestroy
+    public void close() {
+        System.out.println("NetworkClient.destroy");
+        disconnect();
+    }
+}
+```
+<br>
+
+### 빈 스코프
+빈이 존재할 수 있는 범위를 뜻한다.
+
+<br>
+
+스코프 종류
+```
+싱글톤: 기본 스코프, 스프링 컨테이너의 시작과 종료까지 유지되는 가장 넓은 범위의 스코프이다.
+
+프로토타입: 스프링 컨테이너는 프로토타입 빈의 생성과 의존관계 주입까지만 관여하고 더는 관리하지 않는
+매우 짧은 범위의 스코프이다.
+```
+
+<br>
+
+등록 방법
+``` java
+// 자동
+@Scope("prototype")
+@Component
+public class HelloBean {}
+
+// 수동
+@Scope("prototype")
+@Bean
+PrototypeBean HelloBean() {}
+```
+
+<br>
+
+#### 프로토타입 스코프
+프로토타입 스코프를 스프링 컨테이너에 조회하면 스프링 컨테이너는 항상 새로운 인스턴스를 생성해서
+반환한다.  
+이는, 프로토타입 스코프에서 생성되는 빈은 생성, 의존관계 주입, 초기화까지만 처리된다는 것을 의미한다.  
+클라이언트에 빈을 반환하고, 이후 스프링 컨테이너는 생성된 빈을 관리하지 않는다.
+
+따라서, 종료 메소드가 호출되지 않고 클라이언트가 직접 호출해야 한다.
+
+<br>
+
+프로토타입 스코프를 싱글톤 빈과 함께 사용할 때는 Provider를 사용한다.
+
+``` java
+@Scope("singleton")
+static class ClientBean {
+
+    // 지정한 빈을 컨테이너에서 대신 찾아준다 (여기서 PrototypeBean은 프로토타입 스코프)
+    @Autowired
+    private ObjectProvider<PrototypeBean> prototypeBeanProvider;
+
+
+    public int logic() {
+        // 항상 새로운 프로토타입 빈이 생성된다.
+        PrototypeBean prototypeBean = prototypeBeanProvider.getObject();
+        prototypeBean.addCount();
+        return prototypeBean.getCount();
+    }
+}
+```
+DL(Dependency Lookup) : 직접 필요한 의존관계를 찾는 것  
+ObjectProvider의 getObject()를 호출하면 내부에서는 스프링 컨테이너에서 해당 빈을 찾아서 반환한다. (DL)
+
+<br>
+
+### 웹 스코프
+웹 환경에서 동작하며, 스프링이 해당 스코프의 종료시점까지 관리한다.
+
+웹 스코프는 웹 환경에서만 동작하기 때문에 라이브러리를 추가해야 한다.
+
+``` java
+// build.gradle
+implementation 'org.springframework.boot:spring-boot-starter-web'
+```
+스프링 부트가 내장 톰캣 서버를 활용해 웹 서버와 스프링을 함께 실행시킨다
+
+<br>
+
+```
+웹 스코프 종류
+request: HTTP 요청 하나가 들어오고 나갈 때 까지 유지되는 스코프, 각각의 HTTP 요청마다 별도의 빈
+인스턴스가 생성되고, 관리된다.
+session: HTTP Session과 동일한 생명주기를 가지는 스코프
+application: 서블릿 컨텍스트( ServletContext )와 동일한 생명주기를 가지는 스코프
+websocket: 웹 소켓과 동일한 생명주기를 가지는 스코프
+```
+
+request 스코프 빈은 HTTP 요청이 들어와야 생성된다.
+
+<br>
+
+### 프록시
+
+``` java
+@Component
+// 클래스 - TARGET_CLASS, 인터페이스 - INTERFACES
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class MyLogger {
+}
+```
+request 스코프의 빈인 MyLogger의 가짜 프록시 클래스를 만들어두고, HTTP 요청과 상관없이 가짜 프록시 클래스를 다른 빈에 미리 주입하는 게 가능하다.
+
+진짜 객체 조회를 필요한 시점까지 지연처리할 수 있다!
+(MyLogger는 request 스코프이기 때문에 HTTP 요청이 와야 생성된다. 따라서 일반 싱글톤 빈의 멤버로 있으면 에러가 발생하는데, 이를 해결해준다.)
+
+``` java
+@Controller
+@RequiredArgsConstructor
+public class LogDemoController {
+
+    private final LogDemoService logDemoService;
+    // 에러, MyLogger는 request 스코프이기 때문에 일반 싱글톤 빈은 주입가능하지만, MyLogger는 생성되지 않는다.
+    private final MyLogger myLogger;
+
+    ...
+}
+```
+프록시를 사용하지 않은 request 스코프 빈(MyLogger)은 에러가 발생했지만, 프록시를 적용하면 에러가 발생하지 않는다.
+
+프록시가 적용되면, 가짜 프록시 객체를 생성하고, 이 객체는 request 스코프와 관계가 없다.  
+이 객체의 내부에는 요청이 오면 진짜 빈을 요청하는 위임 로직이 포함되어 있다.
+
+정리해보면, 프록시가 적용되면 가짜 객체가 생성된다.  
+LogDemoController 멤버의 MyLogger는 가짜 객체이며 reqeust 스코프 빈이 아니기 때문에 문제가 없다.  
+후에 이 객체를 사용할 때, 진짜 MyLogger를 호출한다.
