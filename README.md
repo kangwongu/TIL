@@ -58,4 +58,5 @@
 - 김영한님
   - [스프링 입문](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(1).md)
   - [스프링 핵심 원리 - 기본편](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(2).md)
+  - [모든 개발자를 위한 HTTP 웹 기본 지식](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(3).md)
 
