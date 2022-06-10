@@ -375,6 +375,77 @@ ex) /members/{id}/delete
 #### 3xx (Redirection)
 웹 브라우저는 3xx 응답 결과에 Location 헤더가 있으면, Location 위치로 자동 이동한다. (Redirect)
 
+```
+300 Multiple Choices
+301 Moved Permanently
+302 Found
+303 See Other
+304 Not Modified
+307 Temporary Redirect
+308 Permanent Redirect
+```
+
+<br>
+
+**영구 리다이렉션**
+
+특정 리소스의 URI가 영구적으로 이동한 경우  
+리소스 URI가 영구적으로 이동
+
+```
+301 Moved Permanently
+- 리다이렉트시 요청 메소드가 GET으로 변하고, 본문이 제거될 수 있다.
+
+308 Permanent Redirect
+- 301과 기능이 같고, 차이점은 리다이렉트시 요청 메소드와 본문 유지한다.
+```
+
+<br>
+
+**일시 리다이렉션**
+
+특정 리소스의 URI를 일시적으로 변경하는 것  
+ex) 주문 완료 후, 주문 내역 화면으로 이동시키기
+
+```
+302 Found
+- 리다이렉트시 요청 메소드가 GET으로 변하고, 본문이 제거될 수 있다.
+
+307 Temporary Redirect
+- 302와 기능이 같고, 차이점은 리다이렉트시 요청 메소드와 본문 유지한다.
+
+303 See Other
+- 302와 기능이 같고, 리다이렉트시 요청 메소드가 GET으로 변경된다는 것을 명확하게 해놓은 것이다.
+```
+주로 302를 많이 쓴다.
+
+<br>
+
+PRG(Post/Redirect/Get) 패턴
+
+POST로 주문후에, 새로 고침으로 인한 중복 주문을 방지하는 예시에 적용될 수 있는 패턴이다.
+
+POST로 주문후에 주문 결과 화면을 GET 메소드로 리다이렉트한다.  
+이렇게 하면, 새로고침해도 중복 주문이 되지 않고 결과 화면을 GET으로 조회하기 때문에 중복 주문이 되지 않는다!
+
+URL이 이미 POST -> GET으로 리다이렉트 되었기 때문에, 새로고침을 해도 GET으로 결과 화면만 조회된다.
+
+<br>
+
+**특수 리다이렉션**
+
+결과 대신 캐시를 사용하는 것
+
+```
+300 Multiple Choices
+- 안씀
+
+304 Not Modified
+- 캐시를 목적으로 사용한다.
+- 클라이언트에게 리소스가 수정되지 않았음을 알려준다. 따라서 클라이언트는 로컬PC에
+저장된 캐시를 재사용한다 (캐시로 리다이렉트 함)
+```
+
 <br>
 
 #### 4xx - 클라이언트 오류
@@ -399,3 +470,150 @@ ex) /members/{id}/delete
 ```
 
 <br>
+
+## HTTP 헤더
+
+HTTP 전송에 필요한 모든 부가정보를 담고 있다.  
+ex) 메시지 바디 내용, 크기, 압축, 인증 등등
+
+HTTP 헤더 분류
+```
+General 헤더: 메시지 전체에 적용되는 정보, 예) Connection: close
+Request 헤더: 요청 정보, 예) User-Agent: Mozilla/5.0 (Macintosh; ..)
+Response 헤더: 응답 정보, 예) Server: Apache
+Entity 헤더: 엔티티 바디 정보, 예) Content-Type: text/html, Content-Length: 3423
+```
+
+엔티티(Entity) -> 표현(Representation)으로 변경됨  
+표현은 표현 메타데이터 + 표현데이터로 구성된다.
+
+표현은 요청이나 응답에서 전달할 실제 데이터를 의미하고 표현 헤더에서는 표현 데이터를 해석할 수 있는 정보를 제공한다.
+
+메시지 본문(body)(페이로드)을 통해 표현 데이터를 전달한다.
+
+<br>
+
+### 표현의 헤더
+```
+Content-Type: 표현 데이터의 형식
+Content-Encoding: 표현 데이터의 압축 방식
+Content-Language: 표현 데이터의 자연 언어
+Content-Length: 표현 데이터의 길이
+```
+
+<br>
+
+### 협상 (콘텐츠 네고시에이션)
+
+클라이언트가 원하는 표현으로 달라고 서버에게 요청하는 것
+
+```
+Accept: 클라이언트가 선호하는 미디어 타입 전달
+Accept-Charset: 클라이언트가 선호하는 문자 인코딩
+Accept-Encoding: 클라이언트가 선호하는 압축 인코딩
+Accept-Language: 클라이언트가 선호하는 자연 언어
+```
+
+<br>
+
+#### 우선순위
+Quality Values(q) 값을 사용해서 우선순위를 정한다.  
+0~1, 클수록 높은 우선순위를 가진다.
+
+ex) Acept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+
+<br>
+
+### 전송 방식
+
+```
+Content-Length 단순 전송
+
+Content-Enoding 압축 전송
+
+Transfer-Encoding 분할 전송
+
+Range, Content-Range 범위 전송
+```
+
+<br>
+
+### 일반 정보
+
+```
+From: 유저 에이전트의 이메일 정보
+Referer: 이전 웹 페이지 주소
+User-Agent: 유저 에이전트 애플리케이션 정보
+Server: 요청을 처리하는 오리진 서버의 소프트웨어 정보
+Date: 메시지가 생성된 날짜
+```
+
+<br>
+
+### 특별한 정보
+
+```
+Host: 요청한 호스트 정보(도메인)
+Location: 페이지 리다이렉션
+Allow: 허용 가능한 HTTP 메서드
+Retry-After: 유저 에이전트가 다음 요청을 하기까지 기다려야 하는 시간
+```
+
+<br>
+
+### 인증
+
+```
+Authorization: 클라이언트 인증 정보를 서버에 전달
+WWW-Authenticate: 리소스 접근시 필요한 인증 방법 정의
+401 Unauthorized 응답과 함께 사용한다
+```
+
+<br>
+
+### 쿠키
+
+```
+Set-Cookie: 서버에서 클라이언트로 쿠키 전달(응답)
+Cookie: 클라이언트가 서버에서 받은 쿠키를 저장하고, HTTP 요청시 서버로 전달
+```
+
+<br>
+
+### 검증 헤더, 조건부 요청 헤더
+
+클라이언트의 요청에 대해 서버가 응답을 줄 때, `Last-Modified` 헤더를 추가해서 응답해준다.  
+응답이 브라우저의 캐시에 저장되고, 클라이언트가 요청할 때 캐시가 만료되면, `if-modified-since` 헤더를 추가해서 서버에 요청한다.  
+서버는 요청을 받고, 클라이언트가 요청하는 데이터가 수정되지 않았다면 304 상태코드(데이터가 변경되지 않았으니 캐시를 재활용해도 된다는 의미)를 응답해준다.
+
+클라이언트는 캐시의 정보를 갱신하고, 재활용한다.
+
+`if-modified-since`, `Last-Modified`헤더를 사용하는 것의 단점은, 날짜 기반이기 때문에, 데이터를 수정했지만 내용은 같고, 날짜만 바뀌었을 때, 변경되었다고 판단하고 다시 데이터를 내려준다는 것이다.
+
+이를 보완하기 위해 `ETag`, `if-none-match`헤더를 사용한다.
+
+`ETag`는 캐시에 임의의 고유한 버전 이름을 정하는 것이다.  
+데이터가 변경되면 이 이름을 바꾸면 된다.  
+그래서, ETag를 보내서 같으면 유지하고, 다르면 다시 받으면 된다.
+
+<br>
+
+### 캐시 제어 헤더
+
+```
+Cache-Control: 캐시 제어
+Pragma: 캐시 제어(하위 호환)
+Expires: 캐시 유효 기간(하위 호환)
+```
+Cache-Control 사용을 권장
+
+<br>
+
+Cache-Control: max-age
+- 캐시 유효시간을 초 단위로 정한다.
+
+Cache-Control: no-cache
+- 데이터는 캐시되지만, 만료시간을 적지 않기에 서버의 검증을 받아야 한다.
+
+Cache-Control: no-store
+- 데이터에 민감한 정보가 있다는 의미로, 저장하면 안된다
