@@ -298,6 +298,25 @@ public Star helloJson() {
 
 <br>
 
+## 스프링 MVC, 스프링 3계층 헷갈리는 용어 정리
+초점에 따라 다르게 사용된 것이다.
+
+### MVC (Controller, Model, View)
+서버에서 클라이언트로 View를 내려주는 것이 핵심이다. (정적, 동적, json)
+
+<br>
+
+### 3계층 (Controller, Service, Repository)
+
+서버에서 클라이언트 처리를 하는 전체적인 과정을 3분류로 나눈 것이다.
+```
+Controller : 클라이언트-서버간 통신을 담당
+Service : 클라이언트의 요청을 서버에서 진짜 처리해주는 핵심 역할(비즈니스 로직)
+Repository : 서버-DB간 통신을 담당
+```
+
+<br>
+
 ## 스프링의 핵심인 IoC / DI 이해
 
 ### IoC (제어의 역전)
