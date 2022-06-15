@@ -82,7 +82,6 @@ public User updateUser1() {
     savedUser1.setNickname("남준이");
     // 회원의 favoriteFood 변경
     savedUser1.setFavoriteFood("육회");
-    [스파르타코딩클럽] Spring 심화반 - 4주차 23
     // user1 을 저장
     User savedUser2 = userRepository.save(savedUser1);
     assert(savedUser1 == savedUser2);
@@ -174,4 +173,3 @@ public class Order {
     private Coupon coupon;
 }
 ```
-
