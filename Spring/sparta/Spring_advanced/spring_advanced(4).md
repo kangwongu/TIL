@@ -111,3 +111,67 @@ public User updateUser2() {
 ```
 함수가 끝나는 시점에 변경된 부분을 알아서 업데이트 해 준다. (이를 'Dirty
 check' 라고 함)
+
+<br>
+
+## DB 연관관계
+
+관계형 DB는 테이블끼리 관계를 맺을 수 있는데, 관계는 논리적으로 연관이 있는 두 테이블 사이의 연결을 설정한다.  
+중복 데이터를 최소화하는 것을 도와준다.
+
+고객 (User) 테이블과 음식 (Food) 테이블이 존재한다 가정할 때, 주문 정보는 어느 테이블에 들어가야 할까?
+
+고객 테이블)
+
+![고객 테이블](https://user-images.githubusercontent.com/59812251/173725193-f048fe0c-aebf-47a3-8cb2-6bce5c37c5c8.png)
+
+
+음식 테이블)
+
+![음식 테이블](https://user-images.githubusercontent.com/59812251/173725197-92c0a251-1a18-4a57-ba69-08154ac497c0.png)
+
+고객이 음식을 주문한다 가정하면, 주문 정보는 어느 테이블에 넣어야 할까?
+
+<br>
+
+주문정보 in 고객 테이블)
+
+![고객 테이블 문제](https://user-images.githubusercontent.com/59812251/173725347-1ba24918-12d5-4f1c-b241-259f70c14765.png)
+
+주문정보가 고객 테이블에 있게 되면, 고객 이름이 중복되는 문제가 발생한다.
+
+<br>
+
+주문정보 in 음식 테이블)
+
+![고객 테이블 문제2](https://user-images.githubusercontent.com/59812251/173725353-72790376-bc67-4dce-b333-83cd6a83691d.png)
+
+음식 이름이 중복되는 문제가 발생한다.
+
+<br>
+
+주문정보 in 주문 테이블)
+
+![해결](https://user-images.githubusercontent.com/59812251/173725355-b2e1af76-e63b-40ba-83c4-7847b5787826.png)
+
+고객, 음식 테이블에 주문 정보가 포함되면 중복 문제가 발생하기 때문에 주문을 위한 테이블을 따로 생성해서 주문 정보를 생성한 테이블에 넣어 해결한다.
+
+<br>
+
+### JPA 연관관계
+
+Entity 클래스의 필드 위에 연관관계 어노테이션을 설정해주면 연관관계가 설정된다.
+
+![연관관계](https://user-images.githubusercontent.com/59812251/173730432-3d07bdf0-80df-46a4-b287-20cf8d689993.png)
+
+``` java
+@Enitity
+public class Order {
+    @OneToMany
+    private List<Food> foods;
+
+    @OneToOne
+    private Coupon coupon;
+}
+```
+
