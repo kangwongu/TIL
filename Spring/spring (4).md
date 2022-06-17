@@ -174,3 +174,113 @@ HTTP 요청을 받고, 비즈니스 로직을 실행한다.
 
 ### DispatcherServlet
 스프링 부트는 DispatcherServlet을 서블릿으로 자동으로 등록하면서 모든 경로에 대해서 매핑한다
+
+<br>
+
+### @RequestMapping
+
+@RequestMapping을 붙임으로써, 더욱 간편해졌다.  
+핸들러로 만들기 위해 특별히 인터페이스를 상속받지 않아도 되고, 애노테이션만 붙이면 된다.
+
+핸들러 매핑, 핸들러 어댑터
+```
+RequestMappingHandlerMapping
+RequestMappingHandlerAdapter
+```
+
+RequestMappingHandlerMapping은 @Controller, @RequestMapping이 클래스 레벨이 붙어 있는 경우에 매핑 정보로 인식한다.
+
+클래스 레벨에 @Controller를 붙이고, 메소드에 @RequestMapping을 붙여주면, 핸들러 매핑과 핸들러 어댑터를 조회하고 실행하는 과정을 애노테이션을 붙임으로써 간편화할 수 있다.
+
+<br>
+
+### 요청 매핑
+
+특정 헤더 조건 매핑
+``` java
+@GetMapping(value = "/mapping-header", headers = "mode=debug")
+public String mappingHeader() {
+    log.info("mappingHeader");
+    return "ok";
+}
+```
+요청 시, header에 포함되어야 하는 정보를 기입해야 한다.
+
+<br>
+
+미디어 타입 조건 매핑 - HTTP 요청 Content-Type, consume
+``` java
+@PostMapping(value = "/mapping-consume", consumes = "application/json")
+public String mappingConsumes() {
+    log.info("mappingConsumes");
+    return "ok";
+}
+```
+요청 시, consumes에 기입된 content-type으로 요청을 해야한다.  
+일치하지 않으면 415(Unsupported Media Type)를 반환한다.
+
+<br>
+
+미디어 타입 조건 매핑 - HTTP 요청 Accept, produce
+``` java
+@PostMapping(value = "/mapping-produce", produces = "text/html")
+public String mappingProduces() {
+    log.info("mappingProduces");
+    return "ok";
+}
+```
+요청 시, produces에 기입된 Accept으로 요청을 해야한다.  
+일치하지 않으면 406(Not Acceptable)을 반환한다.
+
+<br>
+
+## 로깅
+로그 라이브러리는 다양한 것들이 있는데, 이것들을 통합해서 인터페이스로 제공하는 것이 SLF4J라이브러리이다.  
+실무에서는 스프링 부트가 기본으로 제공하는 SLF4J의 구현체인 Logback을 대부분 사용한다.
+
+``` java
+// 로깅 선언
+private final Logger log = LoggerFactory.getLogger(getClass());
+
+@RequestMapping("/log-test")
+public String logTest() {
+    String name = "Spring";
+
+    System.out.println("name = " + name);
+
+    // 로그 호출
+    log.trace("trace log={}", name);
+    log.debug("debug log={}", name);
+    log.info("info log={}", name);
+    log.warn("warn log={}", name);
+    log.error("error log={}", name);
+
+    return "ok";
+}
+```
+롬복 @Slf4j를 사용해서 로깅 선언을 대신할 수 있다.
+
+<br>
+
+로그 레벨은 다음과 같다
+```
+LEVEL: TRACE > DEBUG > INFO > WARN > ERROR
+개발 서버는 debug 출력
+운영 서버는 info 출력
+```
+
+로그 레벨 설정
+``` java
+// application.properties
+
+// 전체 로그 레벨 설정(기본 info)
+logging.level.root=info
+// hello.springmvc 패키지와 그 하위 로그 레벨 설정
+logging.level.hello.springmvc=debug
+```
+
+### 왜 쓰는지?
+쓰레드 정보, 클래스 이름 같은 부가 정보를 함께 볼 수 있고, 로그 레벨에 따라 상황에 맞게 로그 출력을 조절할 수 있다는 점  
+(기존에 System.out을 쓰면 항상 출력이 됐었음)
+
+파일이나 네트워크 등, 로그를 별도에 위치로 남길 수 있고, 로그를 분할하는 것도 가능하다.
