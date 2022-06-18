@@ -103,3 +103,12 @@ VPC 리소스와 인터넷 간 통신을 활성화하기 위해 VPC에 연결하
 
 Private 서브넷이 직접 인터넷과 통신할 수 없기 때문에, 트래픽을 Public 서브넷에 속한 인스턴스에 전송해서 인터넷과 통신을 할 수 있게 되는데, 이러한 역할을 NAT 게이트웨이가 수행한다.  
 Private 서브넷에서 발생하는 요청이 VPC 내부 주소를 목적지로 하는 것이 아니라면, Public 서브넷에 존재하는 NAT 게이트웨이로 트래픽을 전송하고, NAT는 Public 서브넷의 라우팅 규칙에 따라 처리함으로써 Private 서브넷이 인터넷과 통신할 수 있도록 한다.
+
+<br>
+
+## 참고
+https://medium.com/harrythegreat/aws-%EA%B0%80%EC%9E%A5%EC%89%BD%EA%B2%8C-vpc-%EA%B0%9C%EB%85%90%EC%9E%A1%EA%B8%B0-71eef95a7098
+
+https://jbhs7014.tistory.com/164
+
+https://velog.io/@hidaehyunlee/%EA%B3%B5%EC%9D%B8Public-%EC%82%AC%EC%84%A4Private-IP%EC%9D%98-%EC%B0%A8%EC%9D%B4%EC%A0%90
