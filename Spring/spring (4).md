@@ -234,6 +234,206 @@ public String mappingProduces() {
 
 <br>
 
+### HTTP 요청 파라미터
+
+``` java
+public String requestParamV1(HttpServletRequest request, HttpServletResponse response) {
+               
+     ...
+}
+```
+
+
+``` java
+public String requestParamV2(
+            @RequestParam("username") String memberName,
+            @RequestParam("age") int memberAge) {
+               
+     ...
+}
+```
+
+``` java
+public String requestParamV3(
+            @RequestParam String username,
+            @RequestParam int age) {
+               
+     ...
+}
+```
+
+``` java
+public String requestParamV4(String username, int age) {
+               
+     ...
+}
+```
+
+``` java
+public String requestParamDefault(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) int age) {
+               
+     ...
+}
+```
+
+``` java
+public String requestParamMap(
+            @RequestParam(required = false, defaultValue = "guest") String username,
+            @RequestParam(required = false, defaultValue = "999") int age) {
+               
+     ...
+}
+```
+
+``` java
+public String requestParamRequired(@RequestParam Map<String, Object> paramMap) {
+               
+     ...
+}
+```
+
+<br>
+
+#### @ModelAttribute
+
+``` java
+@ResponseBody
+@RequestMapping("/model-attribute-v1")
+public String modelAttributeV1(@RequestParam String username, @RequestParam int age) {
+    HelloData helloData = new HelloData();
+    helloData.setUsername(username);
+    helloData.setAge(age);
+    ...
+}
+```
+
+<br>
+
+@ModelAttribute 사용으로 간편하게 작성 가능
+``` java
+@ResponseBody
+@RequestMapping("/model-attribute-v1")
+public String modelAttributeV1(@ModelAttribute HelloData helloData) {
+    ...
+}
+```
+
+<br>
+
+@ModelAttribute도 생략 가능
+``` java
+@ResponseBody
+@RequestMapping("/model-attribute-v2")
+public String modelAttributeV2(HelloData helloData) {
+    ...
+}
+```
+기본 타입, String은 @RequestParam을 생략할 수 있고, 그 외 참조형은 @ModelAttribute를 생략할 수 있다.
+
+<br>
+
+#### HTTP 메시지 바디로 직접 데이터가 넘어오는 경우
+
+HTTP 메시지 바디를 통해 데이터가 직접 넘어오는 경우는 @RequestParam, @ModelAttribute 를 사용할 수 없다
+
+<br>
+
+**텍스트**
+
+HttpEntity 사용
+``` java
+@ResponseBody
+@PostMapping("/request-body-string-v3")
+public HttpEntity<String> requestBodyStringV3(HttpEntity<String> httpEntity) throws IOException {
+
+    String messageBody = httpEntity.getBody();
+
+    log.info("messageBody={}", messageBody);
+    return new HttpEntity<>("ok");
+}
+```
+HttpEntity를 이용해 HTTP 헤더, 바디를 조회할 수 있다.  
+요청 파라미터를 조회하는 기능과 관계가 없다.
+
+<br>
+
+@RequestBody
+``` java
+@PostMapping("/request-body-string-v4")
+public String requestBodyStringV4(@RequestBody String messageBody) {
+    log.info("messageBody={}", messageBody);
+    return "ok";
+}
+```
+@RequestBody 애노테이션을 사용해 HTTP 메시지 바디 정보를 편리하게 조회가 가능하다.
+
+<br>
+
+**JSON**
+
+``` java
+@ResponseBody
+@PostMapping("/request-body-json-v3")
+public String requestBodyJsonV3(@RequestBody HelloData helloData) {
+    log.info("username={}, age={}", helloData.getUsername(), helloData.getAge());
+
+    return "ok";
+}
+```
+
+
+``` java
+@ResponseBody
+@PostMapping("/request-body-json-v5")
+public HelloData requestBodyJsonV5(@RequestBody HelloData data) {
+    log.info("username={}, age={}", data.getUsername(), data.getAge());
+    return data;
+}
+```
+
+
+### 요청 파라미터 VS HTTP 메시지 바디
+```
+요청 파라미터를 조회하는 기능: @RequestParam , @ModelAttribute
+HTTP 메시지 바디를 직접 조회하는 기능: @RequestBody
+```
+
+<br>
+
+### HTTP 응답
+스프링에서 응답 데이터를 만드는 방법은 크게 3가지 이다.
+
+#### 정적 리소스
+웹 브라우저에 정적인 리소스를 제공하는 경우
+
+<br>
+
+#### 뷰 템플릿
+웹 브라우저에 동적인 HTML을 제공할 때 사용한다.
+
+<br>
+
+#### HTTP 메시지 사용
+HTML이 아닌 데이터를 전달하는 경우이며, HTTP 메시지 바디에 JSON 같은 형식으로 데이터를 실어 보낸다.
+
+<br>
+
+### HTTP 메시지 컨버터
+
+HTTP API처럼 JSON 데이터를 HTTP 메시지 바디에서 직접 읽거나 쓰는 경우, HTTP 메시지 컨버터를 사용하면 편리하다.
+
+@ResponseBody를 사용하게 되면 뷰가 아닌 데이터를 직접 HTTP 메시지 바디에 넣어 반환하게 된다.  
+HTTP 요청이 왔을 때, viewResolver대신에 HttpMessageConverter가 동작한다.
+
+```
+HTTP 요청: @RequestBody , HttpEntity(RequestEntity)
+HTTP 응답: @ResponseBody , HttpEntity(ResponseEntity)
+```
+
+<br>
+
 ## 로깅
 로그 라이브러리는 다양한 것들이 있는데, 이것들을 통합해서 인터페이스로 제공하는 것이 SLF4J라이브러리이다.  
 실무에서는 스프링 부트가 기본으로 제공하는 SLF4J의 구현체인 Logback을 대부분 사용한다.
