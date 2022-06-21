@@ -238,7 +238,6 @@ public String mappingProduces() {
 
 ``` java
 public String requestParamV1(HttpServletRequest request, HttpServletResponse response) {
-               
      ...
 }
 ```
@@ -248,7 +247,6 @@ public String requestParamV1(HttpServletRequest request, HttpServletResponse res
 public String requestParamV2(
             @RequestParam("username") String memberName,
             @RequestParam("age") int memberAge) {
-               
      ...
 }
 ```
@@ -257,14 +255,12 @@ public String requestParamV2(
 public String requestParamV3(
             @RequestParam String username,
             @RequestParam int age) {
-               
      ...
 }
 ```
 
 ``` java
 public String requestParamV4(String username, int age) {
-               
      ...
 }
 ```
@@ -273,7 +269,6 @@ public String requestParamV4(String username, int age) {
 public String requestParamDefault(
             @RequestParam(required = false) String username,
             @RequestParam(required = false) int age) {
-               
      ...
 }
 ```
@@ -282,14 +277,12 @@ public String requestParamDefault(
 public String requestParamMap(
             @RequestParam(required = false, defaultValue = "guest") String username,
             @RequestParam(required = false, defaultValue = "999") int age) {
-               
      ...
 }
 ```
 
 ``` java
-public String requestParamRequired(@RequestParam Map<String, Object> paramMap) {
-               
+public String requestParamRequired(@RequestParam Map<String, Object> paramMap) { 
      ...
 }
 ```
@@ -299,8 +292,6 @@ public String requestParamRequired(@RequestParam Map<String, Object> paramMap) {
 #### @ModelAttribute
 
 ``` java
-@ResponseBody
-@RequestMapping("/model-attribute-v1")
 public String modelAttributeV1(@RequestParam String username, @RequestParam int age) {
     HelloData helloData = new HelloData();
     helloData.setUsername(username);
@@ -313,8 +304,6 @@ public String modelAttributeV1(@RequestParam String username, @RequestParam int 
 
 @ModelAttribute 사용으로 간편하게 작성 가능
 ``` java
-@ResponseBody
-@RequestMapping("/model-attribute-v1")
 public String modelAttributeV1(@ModelAttribute HelloData helloData) {
     ...
 }
@@ -324,13 +313,35 @@ public String modelAttributeV1(@ModelAttribute HelloData helloData) {
 
 @ModelAttribute도 생략 가능
 ``` java
-@ResponseBody
-@RequestMapping("/model-attribute-v2")
 public String modelAttributeV2(HelloData helloData) {
     ...
 }
 ```
 기본 타입, String은 @RequestParam을 생략할 수 있고, 그 외 참조형은 @ModelAttribute를 생략할 수 있다.
+
+@ModelAttribute가 붙은 객체를 Model에 자동 추가해준다.
+
+``` java
+//    @PostMapping("/add")
+public String addItemV2(@ModelAttribute("item") Item item, Model model) {
+
+    itemRepository.save(item);
+//        model.addAttribute("item", item); // @ModelAttribute 사용하면 자동 추가, 생략가능
+    return "basic/item";
+}
+```
+
+<br>
+
+``` java
+@PostMapping("/add")
+public String addItemV3(@ModelAttribute Item item) {
+
+    itemRepository.save(item);
+//        model.addAttribute("item", item); // @ModelAttribute 사용하면 자동 추가, 생략가능
+    return "basic/item";
+}
+```
 
 <br>
 
@@ -431,6 +442,70 @@ HTTP 요청이 왔을 때, viewResolver대신에 HttpMessageConverter가 동작�
 HTTP 요청: @RequestBody , HttpEntity(RequestEntity)
 HTTP 응답: @ResponseBody , HttpEntity(ResponseEntity)
 ```
+
+<br>
+
+## PRG (Post/Redirect/Get) 패턴
+
+``` java
+@PostMapping("/add")
+public String addItemV4(Item item) {
+    itemRepository.save(item);
+
+    return "basic/item";
+}
+```
+상품 등록하는 기능인데, 상품 등록 후, 뷰 템플릿을 반환한다.  
+이 때 문제는, 새로고침하면, Post요청이 계속된다는 것이다. (상품 중복 생성)
+
+![상품 등록](https://user-images.githubusercontent.com/59812251/174729148-20ca76d1-1de7-41a4-bac3-bf41bc224aa2.png)
+
+상품 등록을 완료 후, 반환받은 뷰 템플릿을 그린 화면이다.  
+이 화면에서 새로고침을 하면, POST 요청이 계속 날아간다
+
+<br>
+
+![중복생성](https://user-images.githubusercontent.com/59812251/174729151-01150c79-56f4-4b43-bc04-a82346fbbb98.png)
+
+아이맥을 등록했는데, 새로고침 몇 번 하니까 중복으로 저장된 것을 확인할 수 있다.
+
+<br>
+
+이를 해결하기 위해 PRG 패턴을 사용한다.  
+POST 요청 후에, Redirect 하는 것이다.
+
+``` java
+@PostMapping("/add")
+public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+    Item savedItem = itemRepository.save(item);
+    redirectAttributes.addAttribute("itemId", savedItem.getId());
+    redirectAttributes.addAttribute("status", true);
+
+    return "redirect:/basic/items/{itemId}";
+    }
+```
+뷰 템플릿을 반환하는 것이 아니라 상품 상세 페이지로 Redirect시킨다.  
+상품 상세 페이지는 Get요청이기 때문에 아무리 반복적으로 요청이 되어도 문제될 게 없다!
+
+<br>
+
+### RedirectAttributes
+Redirect할 때, 같이 보내줄 데이터들을 적어준다.  
+상품을 저장하고 Redirect할 때 보내줄 데이터들을 RedirectAttributes에 담는다.
+``` 
+redirect:/basic/items/{itemId}
+
+pathVariable 바인딩: {itemId}
+나머지는 쿼리 파라미터로 처리: ?status=true
+```
+
+<br>
+
+상품 상세 페이지에서 RedirectAttributes를 통해 넘어온 값을 활용할 수 있다.
+``` html
+<h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
+```
+넘어오는 status값이 true면 '저장 완료!'를 띄운다.
 
 <br>
 
