@@ -357,9 +357,287 @@ unique(DDL)
 <br>
 
 #### IDENTITY 전략
-기본 키 생성을 데이터베이스에 위임한다.
+기본 키 생성을 데이터베이스에 위임한다.  
+auto_increment
+
+전략이 IDENTITY면 persist할 때 DB에 Insert 쿼리가 날라가고, DB에서 ID값을 가져온다.  
+JPA는 보통 commit할 때 DB로 쿼리가 날라가지만, auto_increment는 DB에 Insert가 된 후에야 ID값을 알 수 있기 때문에 전략이 IDENTITY일 때만 persist시, ID값 세팅을 위해 DB쿼리가 날라간다.  
+그리고 나서, 영속성 컨텍스트에 저장한다
 
 <br>
 
 #### SEQUENCE 전략
-유일한 값을 순서대로 생성하는 특별한 데이터베이스 오브젝트이다.
+유일한 값을 순서대로 생성하는 특별한 데이터베이스 오브젝트이다.  
+시퀀스 오브젝트를 가져와서 세팅한다.
+
+``` java
+@Entity
+@SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", sequenceName = "MEMBER_SEQ")
+public class Member {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
+    private Long id;
+    ...
+}
+```
+
+![시퀀스](https://user-images.githubusercontent.com/59812251/175187075-47cb7075-a82f-4f7d-8cff-824ad1c41a87.png)
+
+MEMBER_SEQ를 이름으로 한 데이터베이스 시퀀스가 생성된다.  
+이 시퀀스를 가져와서 ID값으로 세팅하는 것
+
+```
+name
+-식별자 생성기 이름
+
+sequenceName
+- 데이터베이스에 등록되어 있는 시퀀스 이름
+
+initialValue
+- DDL 생성 시에만 사용됨, 시퀀스 DDL을 생성할 때 처음 1 시작하는
+수를 지정한다.
+
+allocationSize
+- 시퀀스 한 번 호출에 증가하는 수(성능 최적화에 사용됨
+데이터베이스 시퀀스 값이 하나씩 증가하도록 설정되어 있으면 이 값
+을 반드시 1로 설정해야 한다
+기본값이 50
+
+catalog, schema
+- 데이터베이스 catalog, schema 이름
+```
+
+```
+allcationSize 설정 안하면 기본값 50이라 아래처럼 된다.
+
+ID  NAME  
+1	박지성
+52	손흥민
+102	김보경
+```
+
+<br>
+
+persist할 때, 데이터베이스 시퀀스에서 값을 얻어온 후, ID값으로 세팅하고 영속성 컨텍스트에 저장하는 순으로 동작한다. (아직 DB에 쿼리가 날라간 것은 아님)  
+commit 시점에 DB 쿼리가 날라간다.
+
+<br>
+
+#### TABLE 전략
+키 생성 전용 테이블을 만드는 것이다.  
+데이터베이스 시퀀스를 흉내낸 것이다.
+
+<br>
+
+### 권장하는 식별자 전략
+
+기본 키 제약조건에 부합해야 한다.  
+null이면 안되고, 유일해야 하며, 변하면 안되는 속성!  
+그런데, 이 조건을 미래까지 만족시킬 자연키를 찾기는 어렵다.
+
+<br>
+
+**자연키**
+
+비즈니스적으로 의미있는 식별할 수 있는 정보들  
+ex) 주민등록번호. 전화번호등
+
+**대체키(대리키)**
+
+비즈니스와 전혀 상관없는 시퀀스값, 랜덤값, uuid등
+
+<br>
+
+예를 들어, 주민등록번호가 PK인 테이블이 있는데, 주민등록번호를 테이블에 담으면 안된다는 지침이 내려온다면?  
+PK가 바뀌게 되고, 헤딩 PK를 참조하는 다른 테이블까지 영향을 끼치게 된다.  
+이렇게 변경 가능성이 많으니 되도록 대체키를 PK로 삼도록 하자!
+
+권장하는 방식 : Long형 + 대체키 + 키 생성전략 사용(IDENTITY, SEQUENCE)
+
+<br>
+
+## 연관관계 매핑
+테이블에 맞춰서 외래키를 가져와서 조회하는 방식이 아니라 다이렉트로 객체를 가져올 수 있는, 연관관계를 맺어서 객체지향스럽게 설계하는 방법
+
+``` java
+// 주문한 멤버 찾기, 객체지향스럽지 않은 방식
+Order order = em.find(Order.class, 1L);
+
+Long memberId = order.getMemberId();
+Member member = em.find(Member.class, memberId);
+
+// 식별자를 가져와서 객체를 가져오는 것이 아니라, 바로 객체를 가져올 수 있어야한다.
+```
+
+<br>
+
+객체와 테이블 연관관계의 차이를 이해해야 하고, 이해를 바탕으로 객체의 '참조'와 테이블의 '외래키'를 매핑하는 방법을 알아야 한다.
+
+```
+방향(Direction): 단방향, 양방향
+다중성(Multiplicity): 다대일(N:1), 일대다(1:N), 일대일(1:1), 다대다(N:M) 이해
+연관관계의 주인(Owner): 객체 양방향 연관관계는 관리 주인이 필요
+```
+
+<br>
+
+### 단방향 관계
+
+![단방향](https://user-images.githubusercontent.com/59812251/175203327-930f46dc-920f-47f4-a6c2-467e50e507c2.png)
+
+Member와 Team은 다대일 관계
+``` java
+@Entity
+@Getter @Setter
+public class Member {
+
+    ...
+    // 외래키
+   @Column(name = "TEAM_ID")
+   public Long teamId;
+    ...
+}
+```
+객체 참조가 아닌, 외래키를 그대로 사용
+
+<br>
+
+``` java
+// 저장
+Team team = new Team();
+team.setName("Arsenal");
+em.persist(team);
+
+Member member = new Member();
+member.setUsername("사카");
+member.setTeamId(team.getId()); // 외래키를 직접 다룬다, 객체지향적 x
+em.persist(member);
+
+// 조회
+Member findMember = em.find(Member.class, member.getId());
+// 객체를 바로 꺼낼 수 있는 것이 아니라, 외래키를 사용해서 꺼내야함
+Long findTeamId = findMember.getTeamId();
+Team findTeam = em.find(Team.class, findTeamId);
+
+tx.commit();
+```
+Member에 Team을 넣으려면 외래키를 직접 사용  
+객체지향적이 아닌, 테이블 중심
+
+<br>
+
+연관관계 사용
+``` java
+@Getter @Setter
+public class Member {
+    
+    ...
+    // ORM 매핑
+    @ManyToOne // 연관관계 설정
+    @JoinColumn(name = "TEAM_ID")   // 외래키와 매핑
+    private Team team;
+
+}
+```
+객체의 참조와 테이블의 외래키를 매핑시킴
+
+<br>
+
+``` java
+// 저장
+Team team = new Team();
+team.setName("Arsenal");
+em.persist(team);
+
+Member member = new Member();
+member.setUsername("사카");
+member.setTeam(team);   // JPA가 알아서 PK값을 FK로 등록해준다. 단방향 연관관계 설정
+em.persist(member);
+
+// 조회
+Member findMember = em.find(Member.class, member.getId());
+
+// 객체를 바로 꺼낼 수 있다.
+Team findTeam = findMember.getTeam();
+System.out.println("findTeam.getName() = " + findTeam.getName());
+tx.commit();
+```
+
+<br>
+
+### 양방향 연관관계
+
+![양방향](https://user-images.githubusercontent.com/59812251/175203328-e3ef92ae-861b-4dc2-ab09-90b05b655248.png)
+
+``` java
+@Entity
+@Getter @Setter
+public class Team {
+
+    ...
+    @OneToMany(mappedBy = "team") // 무엇과 매핑되어 있는지
+    private List<Member> members = new ArrayList<>();
+}
+```
+
+테이블은 외래키를 통해 연관관계가 맺어지면 양방향으로 참조가 가능하다.  
+하지만 객체에서 양방향 관계는 사실 서로를 참조하는 단방향 관계 2개인 것이다.  
+(Member -> Team, Team -> Member)
+
+그래서 객체에서 양방향으로 참조하려면 단방향 연관관계 2개를 만들어야 한다.
+
+<br>
+
+여기서, 테이블은 외래키 하나로 두 테이블의 연관관계를 관리한다.  
+그럼 객체는 어떻게 해야할까?
+
+객체에서 2개의 단방향 연관관계중에서 하나를 연관관계의 주인으로 지정해야 한다.
+주인은 외래 키를 관리(@JoinColumn)하고, 주인이 아닌쪽은 읽기(mappedby)만 가능하다.
+
+주인은 테이블에서 외래키가 있는 곳을 주인으로 정한다.  
+Member와 Team은 다대일 관계로, Member에 외래키가 담겨있기 때문에, Member 객체의 Team객체가 연관관계의 주인이 되는 것이다.
+
+<br>
+
+주의할 점은 양방향 관계시, 연관관계의 주인에 값을 입력해야 반영이 된다.  
+되도록 순수 객체 상태를 고려해서 항상 양쪽에 값을 설정해야 한다.
+
+연관관계 편의 메소드)
+``` java
+@Entity
+@Getter @Setter
+public class Member {
+    ...
+
+    // 연관관계 편의 메소드, 양방향 관계일 때 사용
+    public void changeTeam(Team team) {
+        // 양쪽에 값을 세팅하기 위함
+        // 하나의 값을 변경할 때, 나머지 하나의 값도 같이 바꿔줌
+        this.team = team;
+        team.getMembers().add(this);
+    }
+}
+```
+양방향 관계일 때, 양쪽에 값을 편하게 설정하기 위해 사용한다.  
+양쪽에 메소드를 만드는 것이 아니라, 한 쪽을 선택해서 한 쪽에만 만들고 사용한다.
+
+<br>
+
+#### 양방향 매핑 정리
+
+처음 설계 시, 단방향 매핑으로 설계를 끝내야 한다  
+객체와 테이블 매핑은 단방향 매핑으로 끝난 것이며, 양방향 매핑은 반대 방향으로 조회하는 기능이 추가된 것 뿐이다.
+
+단방향 매핑을 잘 해놓고 양방향 매핑은 필요할 때 추가하면 된다.  
+(JPQL로 역방향으로 탐색할 일이 많다.)
+
+<br>
+
+## 연관관계 매핑시 고려사항 3가지
+- 다중성
+- 단방향, 양방향
+- 연관관계의 주인
+
+<br>
+
