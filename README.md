@@ -1,3 +1,6 @@
+[![Velog's GitHub stats](https://velog-readme-stats.vercel.app/api?name=kwg527)](https://github.com/eungyeole/velog-readme-stats)
+
+
 # TIL 저장소
 
 ### 공부한 것 기록하기
