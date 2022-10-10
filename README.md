@@ -60,8 +60,14 @@
   - [스프링 기초반](https://github.com/kangwongu/TIL/blob/master/Spring/sparta/Spring_basic/spring_basic.md)
   - 스프링 심화반
     - [1주차](https://github.com/kangwongu/TIL/blob/master/Spring/sparta/Spring_advanced/spring_advanced(1).md)
+    - [2주차](https://github.com/kangwongu/TIL/blob/master/Spring/sparta/Spring_advanced/spring_advanced(2).md)
+    - [4주차](https://github.com/kangwongu/TIL/blob/master/Spring/sparta/Spring_advanced/spring_advanced(4).md)
 - 김영한님
   - [스프링 입문](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(1).md)
   - [스프링 핵심 원리 - 기본편](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(2).md)
   - [모든 개발자를 위한 HTTP 웹 기본 지식](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(3).md)
-
+  - [스프링 웹 MVC 1편](https://github.com/kangwongu/TIL/blob/master/Spring/spring%20(4).md)
+  
+## JPA
+- 김영한님
+  - [자바 ORM 표준 JPA 프로그래밍 - 기본편](https://github.com/kangwongu/TIL/blob/master/Spring/JPA/jpa(1).md)
