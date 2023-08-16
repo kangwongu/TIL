@@ -1,12 +1,9 @@
-import math
+from fractions import Fraction
 
 def solution(numer1, denom1, numer2, denom2):
-    b = denom1 * denom2
-    a = (numer1 * denom2) + (numer2 * denom1)
-    
-    gcd=math.gcd(a,b)
-    a = a // gcd
-    b = b // gcd
-    
-    answer = [a, b]
+    answer = []
+    result = Fraction(numer1, denom1) + Fraction(numer2, denom2)
+
+    answer.append(result.numerator)
+    answer.append(result.denominator)
     return answer
