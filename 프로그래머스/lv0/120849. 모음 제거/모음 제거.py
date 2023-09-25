@@ -1,5 +1,8 @@
 def solution(my_string):
-    answer = ''
-    answer = my_string.replace('a', '').replace('e', '').replace('i', '').replace('o', '').replace('u', '')
+    answer = my_string
+    m = ['a', 'e', 'i', 'o', 'u']
+    
+    for ch in m:
+        answer = answer.replace(ch, '')
 
     return answer
