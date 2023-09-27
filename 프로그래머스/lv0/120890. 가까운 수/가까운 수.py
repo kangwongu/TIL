@@ -1,11 +1,9 @@
 def solution(array, n):
     array.sort()
-    answer = array[0]
-    target = abs(n - array[0])
+    temp = []
 
-    for i in range(1, len(array)):
-        if abs(n-array[i]) < target:
-            target = abs(n-array[i])
-            answer = array[i]
+    for item in array:
+        temp.append(abs(n-item))
 
+    answer = array[temp.index(min(temp))]
     return answer
