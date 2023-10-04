@@ -1,8 +1,9 @@
 def solution(my_string):
-    answer = my_string
-    m = ['a', 'e', 'i', 'o', 'u']
-    
-    for ch in m:
-        answer = answer.replace(ch, '')
+    answer = ''
+    string = ['a', 'e', 'i', 'o', 'u']
+
+    for ch in my_string:
+        if ch not in string:
+            answer += ch
 
     return answer
