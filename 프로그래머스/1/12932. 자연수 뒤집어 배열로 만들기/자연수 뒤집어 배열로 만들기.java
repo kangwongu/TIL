@@ -2,11 +2,11 @@ class Solution {
     public int[] solution(long n) {
         String nString = String.valueOf(n);
         String reverse = new StringBuilder(nString).reverse().toString();
-        String[] split = reverse.split("");
-        int[] answer = new int[split.length];
+        char[] charArray = reverse.toCharArray();
+        int[] answer = new int[charArray.length];
 
-        for (int i=0; i<split.length; i++) {
-            answer[i] = Integer.parseInt(split[i]);
+        for (int i=0; i<charArray.length; i++) {
+            answer[i] = charArray[i] - '0';
         }
         
         return answer;
